@@ -6,7 +6,7 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
 	plugins: [
-		// Плагин роутера должен идти раньше react()
+		// Must come before react()
 		tanstackRouter({ target: 'react', autoCodeSplitting: true }),
 		react(),
 		tailwindcss(),

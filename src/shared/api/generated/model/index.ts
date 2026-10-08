@@ -5,5 +5,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './currentUserSchema';
 export * from './environment';
 export * from './healthSchema';
+export * from './userRoleEnum';

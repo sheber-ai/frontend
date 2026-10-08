@@ -1,0 +1,221 @@
+/*
+ * Sheber design tokens: the only place where raw colors, fonts and sizes are defined.
+ * Components use semantic Tailwind classes (bg-primary, text-muted-foreground, text-h2, ...).
+ * Reference page: /design (dev only).
+ */
+@import "@fontsource-variable/onest";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Warm "wood workshop" palette: walnut primary, sand neutrals, sage accent */
+:root {
+	--radius: 0.75rem;
+
+	--background: oklch(0.99 0.005 85);
+	--foreground: oklch(0.22 0.02 50);
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.22 0.02 50);
+	--popover: oklch(1 0 0);
+	--popover-foreground: oklch(0.22 0.02 50);
+
+	--primary: oklch(0.5 0.11 48);
+	--primary-foreground: oklch(0.99 0.01 85);
+	--secondary: oklch(0.95 0.02 80);
+	--secondary-foreground: oklch(0.32 0.04 50);
+	--muted: oklch(0.965 0.008 80);
+	--muted-foreground: oklch(0.53 0.02 60);
+	--accent: oklch(0.95 0.015 75);
+	--accent-foreground: oklch(0.22 0.02 50);
+	--brand-sage: oklch(0.62 0.07 150);
+
+	--destructive: oklch(0.55 0.2 27);
+	--destructive-foreground: oklch(0.99 0.01 85);
+	--success: oklch(0.55 0.12 150);
+	--success-foreground: oklch(0.99 0.01 85);
+	--warning: oklch(0.78 0.15 75);
+	--warning-foreground: oklch(0.3 0.06 60);
+	--info: oklch(0.55 0.13 245);
+	--info-foreground: oklch(0.99 0.01 85);
+
+	--border: oklch(0.9 0.012 75);
+	--input: oklch(0.9 0.012 75);
+	--ring: oklch(0.62 0.1 48);
+
+	--chart-1: oklch(0.5 0.11 48);
+	--chart-2: oklch(0.62 0.07 150);
+	--chart-3: oklch(0.68 0.12 40);
+	--chart-4: oklch(0.8 0.08 85);
+	--chart-5: oklch(0.45 0.03 250);
+}
+
+.dark {
+	--background: oklch(0.17 0.012 50);
+	--foreground: oklch(0.96 0.008 80);
+	--card: oklch(0.21 0.014 50);
+	--card-foreground: oklch(0.96 0.008 80);
+	--popover: oklch(0.21 0.014 50);
+	--popover-foreground: oklch(0.96 0.008 80);
+
+	--primary: oklch(0.72 0.12 55);
+	--primary-foreground: oklch(0.2 0.03 50);
+	--secondary: oklch(0.27 0.02 55);
+	--secondary-foreground: oklch(0.94 0.01 80);
+	--muted: oklch(0.25 0.014 50);
+	--muted-foreground: oklch(0.72 0.02 70);
+	--accent: oklch(0.28 0.02 55);
+	--accent-foreground: oklch(0.96 0.008 80);
+	--brand-sage: oklch(0.72 0.08 150);
+
+	--destructive: oklch(0.68 0.19 25);
+	--destructive-foreground: oklch(0.17 0.012 50);
+	--success: oklch(0.7 0.13 150);
+	--success-foreground: oklch(0.17 0.012 50);
+	--warning: oklch(0.8 0.14 75);
+	--warning-foreground: oklch(0.25 0.05 60);
+	--info: oklch(0.7 0.12 245);
+	--info-foreground: oklch(0.17 0.012 50);
+
+	--border: oklch(1 0 0 / 10%);
+	--input: oklch(1 0 0 / 15%);
+	--ring: oklch(0.62 0.1 55);
+
+	--chart-1: oklch(0.72 0.12 55);
+	--chart-2: oklch(0.72 0.08 150);
+	--chart-3: oklch(0.7 0.13 40);
+	--chart-4: oklch(0.82 0.08 85);
+	--chart-5: oklch(0.65 0.04 250);
+}
+
+@theme inline {
+	--font-sans: "Onest Variable", ui-sans-serif, system-ui, sans-serif;
+
+	/* Type scale: text-display, text-h1..h4, text-body-lg, text-body, text-body-sm, text-caption */
+	--text-hero: clamp(2.5rem, 1.6rem + 3.4vw, 5rem);
+	--text-hero--line-height: 1.04;
+	--text-hero--font-weight: 700;
+	--text-hero--letter-spacing: -0.03em;
+	--text-display: 3rem;
+	--text-display--line-height: 1.1;
+	--text-display--font-weight: 700;
+	--text-display--letter-spacing: -0.025em;
+	--text-h1: 2.25rem;
+	--text-h1--line-height: 1.15;
+	--text-h1--font-weight: 700;
+	--text-h1--letter-spacing: -0.02em;
+	--text-h2: 1.75rem;
+	--text-h2--line-height: 1.2;
+	--text-h2--font-weight: 600;
+	--text-h2--letter-spacing: -0.015em;
+	--text-h3: 1.375rem;
+	--text-h3--line-height: 1.3;
+	--text-h3--font-weight: 600;
+	--text-h3--letter-spacing: -0.01em;
+	--text-h4: 1.125rem;
+	--text-h4--line-height: 1.4;
+	--text-h4--font-weight: 600;
+	--text-body-lg: 1.125rem;
+	--text-body-lg--line-height: 1.6;
+	--text-body: 1rem;
+	--text-body--line-height: 1.6;
+	--text-body-sm: 0.875rem;
+	--text-body-sm--line-height: 1.5;
+	--text-caption: 0.75rem;
+	--text-caption--line-height: 1.4;
+	--text-caption--font-weight: 500;
+
+	--animate-marquee: marquee 45s linear infinite;
+	--animate-marquee-reverse: marquee 45s linear infinite reverse;
+	--animate-dash-flow: dash-flow 1.2s linear infinite;
+	--animate-ping-slow: ping-slow 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+
+	@keyframes marquee {
+		to {
+			transform: translateX(-50%);
+		}
+	}
+	@keyframes ping-slow {
+		75%,
+		100% {
+			transform: scale(2.4);
+			opacity: 0;
+		}
+	}
+	@keyframes dash-flow {
+		to {
+			stroke-dashoffset: -16;
+		}
+	}
+
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-brand-sage: var(--brand-sage);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-success: var(--success);
+	--color-success-foreground: var(--success-foreground);
+	--color-warning: var(--warning);
+	--color-warning-foreground: var(--warning-foreground);
+	--color-info: var(--info);
+	--color-info-foreground: var(--info-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+}
+
+/* Shared page width: every section and the header use it */
+@utility page-container {
+	width: 100%;
+	max-width: 1600px;
+	margin-inline: auto;
+	padding-inline: clamp(1rem, 4vw, 4rem);
+}
+
+/* Technical drawing grid */
+@utility bg-blueprint {
+	background-image:
+		linear-gradient(
+			to right,
+			color-mix(in oklch, var(--border) 80%, transparent) 1px,
+			transparent 1px
+		),
+		linear-gradient(
+			to bottom,
+			color-mix(in oklch, var(--border) 80%, transparent) 1px,
+			transparent 1px
+		);
+	background-size: 32px 32px;
+}
+
+@layer base {
+	html {
+		scroll-padding-top: 4rem;
+	}
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background font-sans text-body text-foreground antialiased;
+	}
+}

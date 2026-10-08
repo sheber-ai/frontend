@@ -6,13 +6,13 @@ export const router = createRouter({
 	routeTree,
 	context: { queryClient },
 	defaultPreload: 'intent',
-	// Данные кэширует TanStack Query, роутер повторно их не держит
+	// TanStack Query owns data caching
 	defaultPreloadStaleTime: 0,
 	scrollRestoration: true,
 })
 
 declare module '@tanstack/react-router' {
-	// biome-ignore lint/style/useConsistentTypeDefinitions: расширение модуля возможно только через interface
+	// biome-ignore lint/style/useConsistentTypeDefinitions: module augmentation requires interface
 	interface Register {
 		router: typeof router
 	}

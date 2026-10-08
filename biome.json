@@ -75,9 +75,12 @@
 						"patterns": [
 							{
 								"group": ["@/entities/*/**", "@/features/*/**", "@/widgets/*/**", "@/pages/*/**"],
-								"message": "FSD: импортируйте слайс только через его index.ts (@/features/<slice>)."
+								"message": "FSD: import a slice only through its index.ts (@/features/<slice>)."
 							}
-						]
+						],
+						"paths": {
+							"lucide-react": "Import icons from '@/shared/design' (add new ones to src/shared/design/icons.ts)."
+						}
 					}
 				}
 			}
@@ -100,6 +103,16 @@
 				"rules": {
 					"style": {
 						"useFilenamingConvention": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["src/shared/design/**", "src/shared/ui/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": "off"
 					}
 				}
 			}

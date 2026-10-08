@@ -1,6 +1,5 @@
-// Добавление компонентов shadcn: `npm run ui:add -- dialog input`.
-// Обёртка нужна, потому что shadcn CLI (4.21) пишет `import { cn } from "cn"`
-// вместо алиаса из components.json. Чиним импорт и приводим файлы к стилю Biome.
+// Usage: npm run ui:add -- dialog input
+// shadcn CLI 4.21 writes `import { cn } from "cn"` instead of the configured alias, so fix it up.
 import { execFileSync } from 'node:child_process'
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -8,7 +7,7 @@ import { join } from 'node:path'
 const UI_DIR = 'src/shared/ui'
 const components = process.argv.slice(2)
 if (components.length === 0) {
-	console.error('Укажите компоненты: npm run ui:add -- dialog input')
+	console.error('Usage: npm run ui:add -- dialog input')
 	process.exit(1)
 }
 

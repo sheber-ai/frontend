@@ -1,0 +1,171 @@
+{
+	"app": {
+		"name": "Sheber",
+		"tagline": "Furniture made to your reference: upload a photo, adjust it in 3D, choose a workshop"
+	},
+	"header": {
+		"login": "Log in",
+		"register": "Sign up",
+		"logout": "Log out",
+		"profile": "Profile"
+	},
+	"roles": {
+		"client": "Client",
+		"contractor": "Contractor",
+		"admin": "Administrator"
+	},
+	"profile": {
+		"title": "Profile",
+		"name": "Name",
+		"email": "Email",
+		"roles": "Roles"
+	},
+	"language": {
+		"label": "Language"
+	},
+	"landing": {
+		"nav": {
+			"how": "How it works",
+			"audience": "Who it's for",
+			"why": "Why Sheber"
+		},
+		"hero": {
+			"eyebrow": "Custom furniture platform",
+			"title": "Furniture like in the photo.",
+			"titleAccent": "Made to your size.",
+			"subtitle": "Upload a link or a photo and Sheber turns it into a model with a drawing. Adjust the size and finish, and workshops send you their price.",
+			"ctaPrimary": "Start a project",
+			"ctaSecondary": "How it works",
+			"flowPhoto": "Photo",
+			"flowModel": "3D model",
+			"flowWorkshop": "Workshop"
+		},
+		"configurator": {
+			"model": "Model",
+			"blueprint": "Drawing",
+			"width": "Width",
+			"height": "Height",
+			"sections": "Sections",
+			"material": "Finish",
+			"mm": "mm",
+			"dragHint": "Drag to see the drawing",
+			"tryIt": "Try it: this is the Sheber configurator",
+			"split": "Model and drawing divider"
+		},
+		"how": {
+			"label": "How it works",
+			"title": "Four steps from a picture to furniture",
+			"steps": {
+				"link": {
+					"title": "A link or a photo",
+					"text": "Paste a product link or upload a photo — even a social media screenshot works."
+				},
+				"model": {
+					"title": "Model and drawing",
+					"text": "Sheber builds a model with dimensions. Adjust the width, sections and finish to fit."
+				},
+				"publish": {
+					"title": "Order",
+					"text": "Publish the order — workshops see the drawing and exact sizes right away."
+				},
+				"offers": {
+					"title": "Workshop",
+					"text": "Compare prices, lead times and ratings, and choose who makes your furniture."
+				}
+			},
+			"published": "Published",
+			"orderTitle": "Hinged wardrobe",
+			"offers": "Offers",
+			"days": "{{count}} d"
+		},
+		"audience": {
+			"label": "Who it's for",
+			"title": "One platform, both sides of the deal",
+			"clients": {
+				"tab": "For clients",
+				"title": "Furniture you can't find in stores",
+				"text": "Made to your size, without endless back-and-forth with makers.",
+				"p1": "Start from any picture",
+				"p2": "See the model and drawing before ordering",
+				"p3": "Compare prices from several workshops",
+				"p4": "Track the status in one place",
+				"cta": "Create an order",
+				"mockTitle": "My order",
+				"mockOffers": "Workshop offers",
+				"mockChosen": "Chosen"
+			},
+			"workshops": {
+				"tab": "For workshops",
+				"title": "Orders you don't have to guess",
+				"text": "Ready drawings with dimensions — no eyeballed measurements and no empty calls.",
+				"p1": "An order feed from your city",
+				"p2": "Drawing and sizes come with the order",
+				"p3": "You set the price and lead time",
+				"p4": "Your portfolio and rating work for you",
+				"cta": "Become a partner",
+				"mockTitle": "New orders",
+				"mockRespond": "Respond",
+				"mockBudget": "up to {{value}} ₸",
+				"orders": {
+					"wardrobe": "Hinged wardrobe",
+					"kitchen": "Corner kitchen",
+					"shelf": "Shelving unit"
+				}
+			}
+		},
+		"bento": {
+			"label": "Why Sheber",
+			"title": "Less talk, more furniture",
+			"sources": {
+				"title": "Any picture is a spec",
+				"text": "A link, a screenshot or a phone photo.",
+				"link": "Link",
+				"screenshot": "Screenshot",
+				"photo": "Photo"
+			},
+			"live": {
+				"title": "3D before the first cut",
+				"text": "Drag the sizes and the model rebuilds instantly."
+			},
+			"compare": {
+				"title": "Prices side by side",
+				"text": "Workshop offers in a single list."
+			},
+			"local": {
+				"title": "Makers nearby",
+				"text": "Workshops in your city, not resellers."
+			},
+			"languages": {
+				"title": "Kazakh and Russian",
+				"text": "The interface speaks both — switch any time."
+			},
+			"status": {
+				"title": "Live order status",
+				"text": "From acceptance to delivery.",
+				"accepted": "Accepted",
+				"inProgress": "In progress",
+				"ready": "Ready",
+				"delivered": "Delivered"
+			}
+		},
+		"marquee": "Wardrobes|Kitchens|Beds|Tables|Shelving|Dressers|Hallways|Walk-in closets|Nightstands|Kids' furniture",
+		"materials": {
+			"oak": "Oak",
+			"walnut": "Walnut",
+			"ivory": "Ivory",
+			"sage": "Sage",
+			"graphite": "Graphite"
+		},
+		"cta": {
+			"title": "Your furniture already exists — in a photo.",
+			"titleAccent": "Now let's make it real.",
+			"text": "Start with one picture. Sheber takes care of the rest: the model, the sizes and the makers.",
+			"primary": "Start a project",
+			"secondary": "I'm a workshop"
+		},
+		"footer": {
+			"tagline": "Furniture from a photo — from a 3D model to the workshop.",
+			"rights": "© {{year}} Sheber"
+		}
+	}
+}

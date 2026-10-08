@@ -10,4 +10,7 @@ npm install
 npm run dev
 ```
 
-Бэкенд должен работать на http://localhost:8000 (см. `../backend`).
+Нужны бэкенд на http://localhost:8000 (`../backend`) и Keycloak на http://localhost:8080 (`../keycloak-theme`, `make up`).
+Тестовые пользователи — в `../keycloak-theme/README.md`.
+
+Дизайн-система (цвета, шрифт, иконки, эмблема): `src/shared/design`, витрина — http://localhost:5173/design (dev).
