@@ -7,7 +7,7 @@
 import type { UserRoleEnum } from './userRoleEnum';
 
 /**
- * Пользователь из access token Keycloak. `id` — `sub` пользователя в Keycloak.
+ * User from the Keycloak access token. `id` is the token `sub`.
  */
 export interface CurrentUserSchema {
   id: string;

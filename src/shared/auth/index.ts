@@ -4,6 +4,7 @@ export {
 	isAuthenticated,
 	login,
 	logout,
+	refreshSession,
 	register,
 	requireAuth,
 } from './keycloak'

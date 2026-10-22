@@ -6,7 +6,7 @@
  */
 
 /**
- * Realm-роли Keycloak, которые знает приложение. Остальные роли из токена игнорируются.
+ * Keycloak realm roles known to the app. Others are ignored.
  */
 export type UserRoleEnum = typeof UserRoleEnum[keyof typeof UserRoleEnum];
 

@@ -1,2 +1,2 @@
-export { getViewerName, hasRole, useViewer, type Viewer } from './model/use-viewer'
+export { getViewerName, hasRole, isWorkshop, useViewer, type Viewer } from './model/use-viewer'
 export { RoleBadge } from './ui/role-badge'

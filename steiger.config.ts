@@ -8,8 +8,14 @@ export default defineConfig([
 		ignores: ['**/routes/**', '**/routeTree.gen.ts', '**/shared/api/generated/**'],
 	},
 	{
-		// Shared by the landing now and the 3D constructor next
-		files: ['./src/entities/furniture/**'],
+		// User actions stay features and the editor stays a widget even with a single page using them:
+		// merging them into pages would undo the layering as soon as a second page needs them
+		files: [
+			'./src/features/**',
+			'./src/widgets/**',
+			'./src/entities/furniture/**',
+			'./src/entities/city/**',
+		],
 		rules: { 'fsd/insignificant-slice': 'off' },
 	},
 ])

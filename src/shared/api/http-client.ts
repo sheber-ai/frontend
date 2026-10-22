@@ -1,4 +1,5 @@
 import axios, { type AxiosRequestConfig, isAxiosError } from 'axios'
+import i18n from 'i18next'
 import { getAccessToken, isAuthenticated, login } from '@/shared/auth'
 import { env } from '@/shared/config'
 
@@ -9,6 +10,8 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(async (config) => {
 	const token = await getAccessToken()
 	if (token) config.headers.Authorization = `Bearer ${token}`
+	// Reference data (cities) comes back in this language
+	if (i18n.language) config.headers['Accept-Language'] = i18n.language
 	return config
 })
 

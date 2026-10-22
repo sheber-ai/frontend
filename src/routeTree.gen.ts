@@ -12,6 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as WorkshopRouteImport } from './routes/workshop'
+import { Route as AdminWorkshopsRouteImport } from './routes/admin/workshops'
+import { Route as MarketIndexRouteImport } from './routes/market/index'
+import { Route as MarketOffersRouteImport } from './routes/market/offers'
+import { Route as OrdersIndexRouteImport } from './routes/orders/index'
+import { Route as OrdersOrderIdRouteImport } from './routes/orders/$orderId'
+import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
+import { Route as ProjectsDesignIdRouteImport } from './routes/projects/$designId'
+import { Route as ProjectsNewRouteImport } from './routes/projects/new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +38,165 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkshopRoute = WorkshopRouteImport.update({
+  id: '/workshop',
+  path: '/workshop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminWorkshopsRoute = AdminWorkshopsRouteImport.update({
+  id: '/admin/workshops',
+  path: '/admin/workshops',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketIndexRoute = MarketIndexRouteImport.update({
+  id: '/market/',
+  path: '/market/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketOffersRoute = MarketOffersRouteImport.update({
+  id: '/market/offers',
+  path: '/market/offers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersIndexRoute = OrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersOrderIdRoute = OrdersOrderIdRouteImport.update({
+  id: '/orders/$orderId',
+  path: '/orders/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsDesignIdRoute = ProjectsDesignIdRouteImport.update({
+  id: '/projects/$designId',
+  path: '/projects/$designId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsNewRoute = ProjectsNewRouteImport.update({
+  id: '/projects/new',
+  path: '/projects/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/profile': typeof ProfileRoute
+  '/welcome': typeof WelcomeRoute
+  '/workshop': typeof WorkshopRoute
+  '/admin/workshops': typeof AdminWorkshopsRoute
+  '/market/offers': typeof MarketOffersRoute
+  '/orders/$orderId': typeof OrdersOrderIdRoute
+  '/projects/$designId': typeof ProjectsDesignIdRoute
+  '/projects/new': typeof ProjectsNewRoute
+  '/market/': typeof MarketIndexRoute
+  '/orders/': typeof OrdersIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/profile': typeof ProfileRoute
+  '/welcome': typeof WelcomeRoute
+  '/workshop': typeof WorkshopRoute
+  '/admin/workshops': typeof AdminWorkshopsRoute
+  '/market/offers': typeof MarketOffersRoute
+  '/orders/$orderId': typeof OrdersOrderIdRoute
+  '/projects/$designId': typeof ProjectsDesignIdRoute
+  '/projects/new': typeof ProjectsNewRoute
+  '/market': typeof MarketIndexRoute
+  '/orders': typeof OrdersIndexRoute
+  '/projects': typeof ProjectsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/profile': typeof ProfileRoute
+  '/welcome': typeof WelcomeRoute
+  '/workshop': typeof WorkshopRoute
+  '/admin/workshops': typeof AdminWorkshopsRoute
+  '/market/offers': typeof MarketOffersRoute
+  '/orders/$orderId': typeof OrdersOrderIdRoute
+  '/projects/$designId': typeof ProjectsDesignIdRoute
+  '/projects/new': typeof ProjectsNewRoute
+  '/market/': typeof MarketIndexRoute
+  '/orders/': typeof OrdersIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/design' | '/profile'
+  fullPaths:
+    | '/'
+    | '/design'
+    | '/profile'
+    | '/welcome'
+    | '/workshop'
+    | '/admin/workshops'
+    | '/market/offers'
+    | '/orders/$orderId'
+    | '/projects/$designId'
+    | '/projects/new'
+    | '/market/'
+    | '/orders/'
+    | '/projects/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/design' | '/profile'
-  id: '__root__' | '/' | '/design' | '/profile'
+  to:
+    | '/'
+    | '/design'
+    | '/profile'
+    | '/welcome'
+    | '/workshop'
+    | '/admin/workshops'
+    | '/market/offers'
+    | '/orders/$orderId'
+    | '/projects/$designId'
+    | '/projects/new'
+    | '/market'
+    | '/orders'
+    | '/projects'
+  id:
+    | '__root__'
+    | '/'
+    | '/design'
+    | '/profile'
+    | '/welcome'
+    | '/workshop'
+    | '/admin/workshops'
+    | '/market/offers'
+    | '/orders/$orderId'
+    | '/projects/$designId'
+    | '/projects/new'
+    | '/market/'
+    | '/orders/'
+    | '/projects/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DesignRoute: typeof DesignRoute
   ProfileRoute: typeof ProfileRoute
+  WelcomeRoute: typeof WelcomeRoute
+  WorkshopRoute: typeof WorkshopRoute
+  AdminWorkshopsRoute: typeof AdminWorkshopsRoute
+  MarketOffersRoute: typeof MarketOffersRoute
+  OrdersOrderIdRoute: typeof OrdersOrderIdRoute
+  ProjectsDesignIdRoute: typeof ProjectsDesignIdRoute
+  ProjectsNewRoute: typeof ProjectsNewRoute
+  MarketIndexRoute: typeof MarketIndexRoute
+  OrdersIndexRoute: typeof OrdersIndexRoute
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +222,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/workshop': {
+      id: '/workshop'
+      path: '/workshop'
+      fullPath: '/workshop'
+      preLoaderRoute: typeof WorkshopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/workshops': {
+      id: '/admin/workshops'
+      path: '/admin/workshops'
+      fullPath: '/admin/workshops'
+      preLoaderRoute: typeof AdminWorkshopsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/market/': {
+      id: '/market/'
+      path: '/market'
+      fullPath: '/market/'
+      preLoaderRoute: typeof MarketIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/market/offers': {
+      id: '/market/offers'
+      path: '/market/offers'
+      fullPath: '/market/offers'
+      preLoaderRoute: typeof MarketOffersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders/': {
+      id: '/orders/'
+      path: '/orders'
+      fullPath: '/orders/'
+      preLoaderRoute: typeof OrdersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders/$orderId': {
+      id: '/orders/$orderId'
+      path: '/orders/$orderId'
+      fullPath: '/orders/$orderId'
+      preLoaderRoute: typeof OrdersOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$designId': {
+      id: '/projects/$designId'
+      path: '/projects/$designId'
+      fullPath: '/projects/$designId'
+      preLoaderRoute: typeof ProjectsDesignIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/new': {
+      id: '/projects/new'
+      path: '/projects/new'
+      fullPath: '/projects/new'
+      preLoaderRoute: typeof ProjectsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +299,16 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DesignRoute: DesignRoute,
   ProfileRoute: ProfileRoute,
+  WelcomeRoute: WelcomeRoute,
+  WorkshopRoute: WorkshopRoute,
+  AdminWorkshopsRoute: AdminWorkshopsRoute,
+  MarketOffersRoute: MarketOffersRoute,
+  OrdersOrderIdRoute: OrdersOrderIdRoute,
+  ProjectsDesignIdRoute: ProjectsDesignIdRoute,
+  ProjectsNewRoute: ProjectsNewRoute,
+  MarketIndexRoute: MarketIndexRoute,
+  OrdersIndexRoute: OrdersIndexRoute,
+  ProjectsIndexRoute: ProjectsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

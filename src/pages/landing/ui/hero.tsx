@@ -1,15 +1,16 @@
 import { motion } from 'motion/react'
 import type * as React from 'react'
 import { useTranslation } from 'react-i18next'
-import { register } from '@/shared/auth'
 import { ArrowRight, Box, Camera, Hammer } from '@/shared/design'
 import { scrollToSection } from '@/shared/lib/scroll'
 import { Button } from '@/shared/ui/button'
 import { Text } from '@/shared/ui/typography'
+import { useGetStarted } from '../model/use-get-started'
 import { Configurator } from './configurator'
 import { EASE_OUT } from './reveal'
 
 export function Hero() {
+	const getStarted = useGetStarted()
 	const { t } = useTranslation()
 	const words = t('landing.hero.title').split(' ')
 
@@ -82,7 +83,7 @@ export function Hero() {
 					</FadeIn>
 
 					<FadeIn delay={0.75} className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-						<Button size="lg" onClick={() => void register()} className="group">
+						<Button size="lg" onClick={() => getStarted()} className="group">
 							{t('landing.hero.ctaPrimary')}
 							<ArrowRight className="transition-transform group-hover:translate-x-0.5" />
 						</Button>

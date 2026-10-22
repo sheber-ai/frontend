@@ -1,13 +1,14 @@
 import { motion, useScroll, useTransform } from 'motion/react'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { register } from '@/shared/auth'
 import { ArrowRight, LogoMark } from '@/shared/design'
 import { Button } from '@/shared/ui/button'
 import { Text } from '@/shared/ui/typography'
+import { useGetStarted } from '../model/use-get-started'
 import { Reveal } from './reveal'
 
 export function CtaSection() {
+	const getStarted = useGetStarted()
 	const { t } = useTranslation()
 	const section = useRef<HTMLElement>(null)
 	const { scrollYProgress } = useScroll({ target: section, offset: ['start end', 'end start'] })
@@ -37,11 +38,11 @@ export function CtaSection() {
 					</Text>
 				</Reveal>
 				<Reveal delay={0.2} className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-					<Button size="lg" onClick={() => void register()}>
+					<Button size="lg" onClick={() => getStarted()}>
 						{t('landing.cta.primary')}
 						<ArrowRight />
 					</Button>
-					<Button size="lg" variant="outline" onClick={() => void register()}>
+					<Button size="lg" variant="outline" onClick={() => getStarted('workshops')}>
 						{t('landing.cta.secondary')}
 					</Button>
 				</Reveal>

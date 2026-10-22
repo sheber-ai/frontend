@@ -47,6 +47,11 @@ export async function getAccessToken(): Promise<string | undefined> {
 	return keycloak.token
 }
 
+/** Forces a new token, e.g. to pick up a role granted a moment ago. */
+export async function refreshSession(): Promise<void> {
+	if (keycloak.authenticated) await keycloak.updateToken(-1)
+}
+
 /** `beforeLoad` guard for protected routes. */
 export async function requireAuth(): Promise<void> {
 	if (!isAuthenticated()) await login(window.location.href)

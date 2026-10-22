@@ -2,7 +2,6 @@ import { motion } from 'motion/react'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_SKETCH, WardrobeDrawing } from '@/entities/furniture'
-import { register } from '@/shared/auth'
 import { ArrowRight, Check, ChevronRight, Hammer, Star, User } from '@/shared/design'
 import { revealTop } from '@/shared/lib/scroll'
 import { cn } from '@/shared/lib/utils'
@@ -10,6 +9,7 @@ import { Badge } from '@/shared/ui/badge'
 import { Button } from '@/shared/ui/button'
 import { Heading, Text } from '@/shared/ui/typography'
 import { OFFERS, ORDERS } from '../model/mock'
+import { useGetStarted } from '../model/use-get-started'
 import { EASE_OUT, Reveal, SectionLabel } from './reveal'
 
 const AUDIENCES = ['clients', 'workshops'] as const
@@ -102,6 +102,7 @@ export function AudienceSection() {
 }
 
 function AudienceText({ audience }: { audience: Audience }) {
+	const getStarted = useGetStarted()
 	const { t } = useTranslation()
 	const points = (['p1', 'p2', 'p3', 'p4'] as const).map((key) =>
 		t(`landing.audience.${audience}.${key}`),
@@ -133,7 +134,7 @@ function AudienceText({ audience }: { audience: Audience }) {
 					</motion.li>
 				))}
 			</ul>
-			<Button size="lg" className="mt-1 w-full sm:w-auto" onClick={() => void register()}>
+			<Button size="lg" className="mt-1 w-full sm:w-auto" onClick={() => getStarted(audience)}>
 				{t(`landing.audience.${audience}.cta`)}
 				<ArrowRight />
 			</Button>

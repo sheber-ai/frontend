@@ -15,6 +15,6 @@ export const GetMeResponse = zod.object({
   "email": zod.union([zod.string(),zod.null()]),
   "firstName": zod.union([zod.string(),zod.null()]),
   "lastName": zod.union([zod.string(),zod.null()]),
-  "roles": zod.array(zod.enum(['client', 'contractor', 'admin']).describe('Realm-роли Keycloak, которые знает приложение. Остальные роли из токена игнорируются.'))
-}).describe('Пользователь из access token Keycloak. `id` — `sub` пользователя в Keycloak.')
+  "roles": zod.array(zod.enum(['client', 'contractor', 'admin']).describe('Keycloak realm roles known to the app. Others are ignored.'))
+}).describe('User from the Keycloak access token. `id` is the token `sub`.')
 

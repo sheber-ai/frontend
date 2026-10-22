@@ -1,8 +1,9 @@
 # Sheber Frontend — правила для разработчиков и ИИ-агентов
 
-Sheber — платформа заказа мебели. **Клиент** загружает ссылку или фото мебели с другого сайта,
-мы разбираем её и открываем в онлайн **3D-конструкторе**. Клиент дорабатывает модель и публикует
-**объявление**. **Подрядчики** (мебельные цехи) берут объявления и выполняют заказ.
+Sheber — платформа заказа корпусной мебели (шкафы, стеллажи, комоды). **Клиент** собирает мебель в онлайн
+**3D-конструкторе** из шаблона (позже — по ссылке или фото с помощью ИИ) и публикует **заказ**.
+**Мастерские** после модерации видят заказы своего города, откликаются ценой и сроком; клиент выбирает
+одну, и стороны видят контакты друг друга. Оплаты на платформе пока нет.
 
 Это SPA. Бэкенд (FastAPI) — в соседнем репозитории `../backend`; клиент API генерируется из его
 OpenAPI-схемы через Orval.
@@ -76,14 +77,25 @@ src/
 - `shared` импортируется по сегментам: `@/shared/ui/button`, `@/shared/lib/utils`, `@/shared/api`.
 - `routes/` содержит только `createFileRoute(...)` с `component`, `loader`, `validateSearch`. Разметка и логика — в `pages`.
 
-### Слайсы (план)
+### Слайсы
 
 | Слой | Слайсы |
 |---|---|
-| `entities` | `viewer` (текущий пользователь, есть), `furniture` (3D-модель шкафа, есть), `contractor`, `furniture`, `listing`, `offer`, `order` |
-| `features` | `import-furniture` (ссылка/фото → черновик), `edit-furniture-params`, `publish-listing`, `send-offer`, `accept-offer` |
-| `widgets` | `app-header` (есть), `furniture-constructor` (3D-сцена), `listing-feed` |
-| `pages` | `landing` (главная, есть), `profile` (есть), `design-system` (dev), `import`, `constructor`, `listings`, `listing-details`, `contractor-dashboard` |
+| `entities` | `viewer` (текущий пользователь), `city` (справочник городов, `CitySelect`), `furniture` (документ мебели, ядро конструктора, 3D, чертёж, превью), `order`, `offer`, `workshop` (бейджи статусов, карточки) |
+| `features` | `start-design` (шаблоны, импорт по ссылке/фото), `publish-order`, `send-offer`, `accept-offer`, `manage-order`, `delete-design`, `edit-profile`, `workshop-application`, `moderate-workshop` |
+| `widgets` | `app-header` (навигация по ролям, мобильное меню), `design-editor` (конструктор) |
+| `pages` | `landing`, `welcome` (онбординг), `projects`, `project-new`, `project-editor`, `orders`, `order-details`, `market` (лента мастерских), `my-offers`, `workshop`, `admin-workshops`, `profile`, `design-system` (dev) |
+
+### Справочники и перечисления
+
+- **Справочники из БД** (города) — сущность в `entities/<что>`: хук над сгенерированным запросом и UI выбора
+  (`useCities`, `CitySelect` из `@/entities/city`). В формах храним `id`, в ответах API приходит объект
+  `{ id, name }` с названием уже на языке пользователя — локали фронтенда названия не дублируют.
+- **Перечисления в коде** (статусы, типы мебели, материалы) — тип и константы генерирует Orval из OpenAPI
+  (`FurnitureTypeEnum` из `@/shared/api/generated/model`), подписи — ключи i18n (`furnitureTypes.*`, `orderStatus.*`).
+  Свои копии значений не заводим.
+- Язык уходит на бэкенд заголовком `Accept-Language` (interceptor в `http-client.ts`); при смене языка
+  кэш запросов сбрасывается (`app/entrypoint`), и данные приходят в новом языке.
 
 ## Нейминг
 
@@ -115,8 +127,11 @@ src/
   export const Route = createFileRoute('/listings/new')({ beforeLoad: requireAuth, component: NewListingPage })
   ```
 - Кнопки: `login()`, `register()`, `logout()` из `@/shared/auth`.
-- Текущий пользователь и роли — `useViewer()` из `@/entities/viewer` (данные с бэкенда `/auth/me`,
-  а не из токена). Проверка роли — `hasRole(viewer, UserRoleEnum.contractor)`; enum — из сгенерированных моделей.
+- Текущий пользователь и роли — `useViewer()` из `@/entities/viewer` (профиль с бэкенда `/users/me`:
+  телефон, город, роли, статус мастерской). Проверка роли — `hasRole(viewer, 'contractor')`,
+  подтверждённая мастерская — `isWorkshop(viewer)`.
+- Новый пользователь без телефона и города попадает на `/welcome` (`OnboardingGate` в `app/layout`).
+- Роль `contractor` выдаёт бэкенд при одобрении мастерской; в токене она появится после `refreshSession()`.
 - Скрытие кнопок по ролям — только UX. Настоящая проверка прав — на бэкенде.
 
 ## API: Orval
@@ -194,20 +209,32 @@ import { Heading, Text } from '@/shared/ui/typography'
   переводится, но пока не показывается). Выбор сохраняется в localStorage и передаётся в Keycloak.
   Исключение — dev-страница `/design`, она не переводится.
 
-## 3D
+## Конструктор и 3D
 
-- Сцены — React Three Fiber (`<Canvas>`) + хелперы drei. Three.js императивно — только там, где нет R3F/drei.
-- 2D-рендер шкафа — `WardrobeDrawing` (`mode="model" | "blueprint"`) в `entities/furniture`. Реализм модели:
-  каждая грань рисуется в плоских координатах (см, ось y вверх) и переносится в изометрию аффинной матрицей —
-  текстуры и свет ложатся по грани; шпон и краска процедурные (`feTurbulence` + `feDisplacementMap`), без картинок.
-  Новое покрытие — запись в `MATERIALS` (`finish: 'wood' | 'paint'`, цвета волокон/рисунка, фурнитура `HARDWARE`).
-- Модели мебели — в `entities/furniture` (`<Cabinet getParams={...} />`). Геометрия общая (единичный куб),
-  размеры меняются через `scale` — параметры можно менять каждый кадр без пересоздания геометрии.
-- Параметры мебели (габариты, материалы, секции) — данные, сцена строится из них. Цвета материалов — только
-  `MATERIALS` из `@/shared/design`.
+Мебель — это **документ** (`entities/furniture/model/document.ts`, размеры в мм), бэкенд хранит его как JSON и
+валидирует той же схемой (`backend/schemas/designs/sch_document.py`) — меняете формат, меняйте оба места.
+
+- **Дерево разбиений**: узел — либо `split` (ось `x` — колонки слева направо, `y` — ярусы сверху вниз,
+  размер ребёнка в мм или `null` = «авто»), либо `cell` с наполнением (`empty`, `shelves`, `rod`, `drawers`).
+  Двери (`door`) висят на любом узле, но не перекрываются: `setDoor` снимает двери у предков и потомков.
+  Тип фасада (`open`/`hinged`/`sliding`) — на весь документ.
+- **Ядро** — чистые функции без React: `computeLayout` (координаты узлов и перегородок),
+  `buildParts` (детали для 3D и чертежа), `validateDocument` (ошибки и замечания с кодами `issues.*`),
+  `summarizeDesign` (характеристики), операции в `operations.ts` (всегда возвращают новый документ).
+  Новое правило или наполнение — с тестом в `kernel.test.ts`.
+- **Шаблоны** — `model/templates.ts`, тексты — `templates.<id>` в локалях; каждый шаблон проходит проверку без ошибок (тест).
+- **Отрисовка**: `DesignScene` (R3F, грузится лениво), `DesignDrawing` (SVG: `blueprint` с размерными цепочками,
+  `facade` — превью), `DesignViewport` (переключатель 3D/чертёж, двери, размеры). Подписи в 3D — спрайты
+  с canvas-текстурой (`lib/label-texture.ts`), не `Html` из drei.
+- Редактор (`widgets/design-editor`): история undo/redo с объединением шагов слайдера (`useEditorState`),
+  автосохранение с задержкой (`useAutosave`), `flush()` перед публикацией.
+- Импорт по ссылке/фото пока без ИИ: ссылка сохраняется в `designs.source_url` и показывается мастерской.
+  Место для ИИ-разбора — `features/start-design/ui/link-import-card.tsx` и `photo-import-card.tsx`
+  (на бэкенде — будущий домен `imports`).
+- Лендинг использует свой лёгкий изометрический `WardrobeDrawing` (`model/sketch.ts`) — это не документ конструктора.
+- Цвета материалов — только `MATERIALS` из `@/shared/design`; их имена совпадают с `MaterialEnum` на бэкенде.
 - Покадровые изменения — в `useFrame` через ref, а не через `setState`.
-- three.js тяжёлый: компонент с `<Canvas>` грузится лениво (`lazy(() => import(...))` + `Suspense`).
-- Внешние ассеты (HDRI-пресеты drei `Environment` и т.п.) не используем — они тянутся с CDN.
+- Внешние ассеты (HDRI-пресеты drei `Environment`, шрифты troika) не используем — они тянутся с CDN.
 
 ## Анимации
 

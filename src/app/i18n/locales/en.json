@@ -18,7 +18,10 @@
 		"title": "Profile",
 		"name": "Name",
 		"email": "Email",
-		"roles": "Roles"
+		"roles": "Roles",
+		"saved": "Profile saved",
+		"workshop": "Workshop",
+		"workshopApply": "Take orders as a workshop"
 	},
 	"language": {
 		"label": "Language"
@@ -167,5 +170,498 @@
 			"tagline": "Furniture from a photo — from a 3D model to the workshop.",
 			"rights": "© {{year}} Sheber"
 		}
+	},
+	"common": {
+		"save": "Save",
+		"cancel": "Cancel",
+		"delete": "Delete",
+		"back": "Back"
+	},
+	"units": {
+		"mm": "mm"
+	},
+	"nav": {
+		"projects": "Projects",
+		"orders": "Orders",
+		"market": "Order feed",
+		"offers": "My offers",
+		"workshop": "Workshop",
+		"moderation": "Moderation",
+		"profile": "Profile",
+		"menu": "Menu"
+	},
+	"city": {
+		"placeholder": "Choose a city",
+		"all": "All cities",
+		"search": "Find a city",
+		"notFound": "This city is not on the list"
+	},
+	"furnitureTypes": {
+		"wardrobe": "Wardrobe",
+		"shelving": "Shelving",
+		"dresser": "Dresser and stand"
+	},
+	"materials": {
+		"oak": "Oak",
+		"walnut": "Walnut",
+		"ivory": "Ivory",
+		"sage": "Sage",
+		"graphite": "Graphite"
+	},
+	"orderStatus": {
+		"published": "Awaiting offers",
+		"assigned": "Workshop chosen",
+		"in_progress": "In progress",
+		"completed": "Completed",
+		"cancelled": "Cancelled"
+	},
+	"offerStatus": {
+		"pending": "Under review",
+		"accepted": "Accepted",
+		"rejected": "Not chosen",
+		"withdrawn": "Withdrawn"
+	},
+	"workshopStatus": {
+		"pending": "Under review",
+		"approved": "Verified",
+		"rejected": "Rejected"
+	},
+	"errors": {
+		"unknown": "Something went wrong. Please try again.",
+		"network": "No connection to the server. Check your internet and try again.",
+		"validation": "Check the form: some fields are filled in incorrectly.",
+		"not_found": "We could not find it. It may have been deleted.",
+		"permission_denied": "You do not have access to this action.",
+		"unauthorized": "Your session has ended. Please sign in again.",
+		"profile_incomplete": "Add a phone number to your profile so the workshop can reach you.",
+		"workshop_required": "This is available to verified workshops.",
+		"offer_exists": "You have already responded to this order.",
+		"invalid_status": "The order status has changed. Refresh the page.",
+		"conflict": "The data has changed. Refresh the page.",
+		"service_unavailable": "The service is temporarily unavailable. Try again in a minute.",
+		"city_not_found": "This city is not on the list. Choose another one."
+	},
+	"form": {
+		"required": "Fill in this field",
+		"invalid": "Check the value",
+		"phone": "Use the format +7 701 123 45 67",
+		"digits": "Digits only",
+		"taxId": "BIN or IIN: 12 digits",
+		"url": "The link must start with https://",
+		"tooLong": "The text is too long",
+		"minPrice": "The price starts at 1,000 ₸",
+		"pastDate": "This date has passed",
+		"pickOne": "Choose at least one option"
+	},
+	"welcome": {
+		"title": "Welcome to Sheber",
+		"text": "Let us get to know you. Your phone and city let the chosen workshop contact you and show your orders to workshops nearby.",
+		"who": "How will you use Sheber?",
+		"intent": {
+			"client": {
+				"title": "I want to order furniture",
+				"text": "I will design it in the constructor and pick a workshop from the offers"
+			},
+			"workshop": {
+				"title": "I run a workshop",
+				"text": "I will take orders. A moderator checks the account after the application"
+			}
+		},
+		"contacts": "Contacts",
+		"contactsHint": "Only the side you agree a deal with will see them.",
+		"submit": "Continue"
+	},
+	"profileForm": {
+		"firstName": "First name",
+		"lastName": "Last name",
+		"phone": "Phone",
+		"phoneHint": "A Kazakhstan number the workshop will call",
+		"city": "City"
+	},
+	"projects": {
+		"title": "My projects",
+		"description": "Furniture you designed in the constructor. Projects save automatically, so you can come back any time.",
+		"new": "New project",
+		"emptyTitle": "No projects yet",
+		"emptyText": "Pick a wardrobe, shelving or dresser template and make it yours.",
+		"deleteTitle": "Delete \"{{title}}\"?",
+		"deleteText": "The project will be deleted for good. Published orders stay.",
+		"fromLink": "Created from a link"
+	},
+	"templates": {
+		"wardrobeHinged": {
+			"title": "Hinged wardrobe",
+			"description": "Three sections: hanging rail, shelves and drawers, hinged doors"
+		},
+		"wardrobeSliding": {
+			"title": "Sliding wardrobe",
+			"description": "Two sliding doors, rails at the sides, drawers in the middle"
+		},
+		"shelvingOpen": {
+			"title": "Open shelving",
+			"description": "Two columns of four shelves for books and decor"
+		},
+		"shelvingCabinet": {
+			"title": "Shelving with cabinet",
+			"description": "Open shelves on top, closed doors below"
+		},
+		"dresserClassic": {
+			"title": "Dresser",
+			"description": "Four roomy drawers"
+		},
+		"dresserWide": {
+			"title": "Wide dresser",
+			"description": "Two columns of three drawers"
+		},
+		"tvStand": {
+			"title": "TV stand",
+			"description": "Drawers at the sides and an open niche in the middle"
+		}
+	},
+	"start": {
+		"eyebrow": "New project",
+		"title": "Where do we start?",
+		"description": "Take a template and change everything in it: sizes, sections, contents, doors and materials.",
+		"templatesTitle": "Templates",
+		"templatesText": "A template is a starting point. You can rebuild it completely in the constructor.",
+		"importTitle": "From a sample",
+		"importText": "Found furniture in another shop? Soon you will be able to load it straight into the constructor.",
+		"link": {
+			"title": "From a shop link",
+			"text": "Soon AI will read the link and build the model itself. For now, pick the type: a similar template opens, and the link is saved with the project so the workshop sees the sample.",
+			"url": "Product link",
+			"type": "What kind of furniture",
+			"submit": "Create project",
+			"soon": "AI coming soon"
+		},
+		"photo": {
+			"title": "From a photo",
+			"text": "Take a photo of furniture or upload a screenshot, and AI will work out its type, proportions and materials.",
+			"soon": "Coming soon",
+			"steps": {
+				"one": "Upload a photo or a screenshot",
+				"two": "AI builds a draft model",
+				"three": "You adjust the sizes in the constructor"
+			}
+		}
+	},
+	"editor": {
+		"back": "To projects",
+		"title": "Project name",
+		"undo": "Undo",
+		"redo": "Redo",
+		"publish": "Publish order",
+		"notFound": "Project not found",
+		"notFoundText": "It may have been deleted, or the link is wrong.",
+		"tabs": {
+			"section": "Section",
+			"body": "Body",
+			"check": "Check"
+		},
+		"save": {
+			"saved": "Saved",
+			"pending": "Unsaved changes",
+			"saving": "Saving…",
+			"error": "Not saved, retry"
+		},
+		"view": {
+			"label": "View",
+			"model": "3D",
+			"drawing": "Drawing",
+			"open": "Open fronts",
+			"close": "Close fronts",
+			"dimensions": "Dimensions",
+			"hint3d": "Tap a section to edit it. Rotate the model with a finger or the mouse",
+			"hintDrawing": "Tap a section to edit it"
+		},
+		"body": {
+			"size": "Overall size",
+			"width": "Width",
+			"height": "Height",
+			"depth": "Depth",
+			"plinth": "Plinth",
+			"materials": "Materials",
+			"bodyMaterial": "Body",
+			"frontMaterial": "Fronts",
+			"facade": "Front"
+		},
+		"facade": {
+			"open": "Open",
+			"hinged": "Hinged",
+			"sliding": "Sliding",
+			"openHint": "No doors: everything inside is on view. Drawers get their own fronts.",
+			"hingedHint": "Doors belong to sections: choose a section and set which way its door opens.",
+			"slidingHint": "Sliding doors cover the whole front. Drawers behind them become internal.",
+			"panels": "Doors"
+		},
+		"section": {
+			"body": "Body",
+			"name": "Section {{index}}",
+			"clear": "Clear {{width}} × {{height}} mm",
+			"parent": "Select the outer section",
+			"deselect": "Clear selection",
+			"emptyTitle": "Choose a section",
+			"emptyText": "Tap any part of the furniture on the model or the drawing to see its settings here.",
+			"selectBody": "Select the whole body",
+			"width": "Width",
+			"height": "Height",
+			"sizeMode": "Size",
+			"auto": "Auto",
+			"fixed": "Exact",
+			"autoHint": "The section takes the space left by sections with an exact size.",
+			"fill": "Contents",
+			"divide": "Divide",
+			"divideColumns": "Into columns",
+			"divideRows": "Into tiers",
+			"divideHint": "The section splits into two parts with the same contents. You can then set each one up separately.",
+			"parts": "Parts",
+			"direction": "Direction",
+			"columns": "Columns",
+			"rows": "Tiers",
+			"add": "Add a part",
+			"mm": "{{value}} mm",
+			"door": "Door and hinge side",
+			"remove": "Remove section",
+			"less": "Fewer",
+			"more": "More"
+		},
+		"fill": {
+			"empty": "Empty",
+			"shelves": "Shelves",
+			"rod": "Rail",
+			"drawers": "Drawers",
+			"shelvesCount": "Shelves",
+			"drawersCount": "Drawers"
+		},
+		"door": {
+			"none": "None",
+			"left": "Left",
+			"right": "Right",
+			"double": "Double",
+			"covered": "The door of \"{{name}}\" already covers this section."
+		},
+		"check": {
+			"title": "Design check",
+			"ok": "All good: no errors or warnings.",
+			"hint": "Errors block publishing. Warnings can stay; the workshop takes them into account."
+		}
+	},
+	"issues": {
+		"splitOverflow": "The exact part sizes do not fit. Reduce them or set one part to Auto.",
+		"cellTooSmall": "The section is too small: it needs at least {{width}} × {{height}} mm.",
+		"shelfTooLong": "A shelf longer than {{max}} mm may sag. Add a divider.",
+		"shelvesTooDense": "The shelves are too close: leave at least {{min}} mm between them.",
+		"rodTooLow": "Not enough height for a rail: clothes need at least {{min}} mm.",
+		"rodTooLong": "A rail longer than {{max}} mm may bend.",
+		"drawerTooNarrow": "A drawer narrower than {{min}} mm leaves no room for runners.",
+		"drawerTooWide": "A drawer wider than {{max}} mm will skew when pulled out.",
+		"drawerTooLow": "Drawers lower than {{min}} mm are impractical. Use fewer of them.",
+		"doorTooWide": "A door leaf wider than {{max}} mm is heavy. A double door works better.",
+		"doorTooNarrow": "A door leaf narrower than {{min}} mm leaves no room for hinges.",
+		"slidingTooNarrow": "A sliding door narrower than {{min}} mm is too small. Use fewer doors.",
+		"slidingTooWide": "A sliding door wider than {{max}} mm is hard to move. Add a door.",
+		"slidingTooShallow": "Sliding doors need a depth of at least {{min}} mm: the tracks take part of it."
+	},
+	"specs": {
+		"title": "Specifications",
+		"size": "Size (W × H × D)",
+		"plinth": "Plinth",
+		"body": "Body",
+		"fronts": "Fronts",
+		"facade": "Front type",
+		"facadeType": {
+			"open": "Open",
+			"hinged": "Hinged doors",
+			"sliding": "Sliding"
+		},
+		"sections": "Section widths, mm",
+		"shelves": "Shelves",
+		"rods": "Rails",
+		"drawers": "Drawers",
+		"doors": "Doors",
+		"none": "None"
+	},
+	"publish": {
+		"title": "Publish the order",
+		"description": "Workshops in your city will see the model with its sizes and offer a price and a time frame. Only the workshop you choose gets your contacts.",
+		"city": "City",
+		"budget": "Budget",
+		"deadline": "Preferred date",
+		"optional": "Optional",
+		"notes": "Wishes",
+		"notesHint": "Hardware, edge colour, delivery and assembly: anything the model does not show.",
+		"notesPlaceholder": "For example: soft-close doors, assembly on the 4th floor",
+		"submit": "Publish",
+		"success": "The order is published. Workshops can see it now",
+		"blockedTitle": "The project has errors",
+		"blockedText": "Fix the errors on the Check tab: a workshop cannot make the furniture with them.",
+		"showIssues": "Show errors"
+	},
+	"order": {
+		"city": "City",
+		"budget": "Budget",
+		"budgetOpen": "No budget given",
+		"deadline": "Deadline",
+		"deadlineOpen": "No deadline",
+		"offers": "Offers",
+		"offersCount_one": "{{count}} offer",
+		"offersCount_other": "{{count}} offers"
+	},
+	"orders": {
+		"title": "My orders",
+		"description": "Published projects and the offers workshops sent for them.",
+		"emptyTitle": "No orders yet",
+		"emptyText": "Design a project in the constructor and publish it. Workshops will send prices and time frames.",
+		"toProjects": "To projects"
+	},
+	"orderTimeline": {
+		"published": {
+			"title": "Published",
+			"text": "Workshops send offers with a price and a time frame"
+		},
+		"assigned": {
+			"title": "Workshop chosen",
+			"text": "Contacts are open, so discuss the details"
+		},
+		"in_progress": {
+			"title": "In progress",
+			"text": "The workshop is making the furniture"
+		},
+		"completed": {
+			"title": "Completed",
+			"text": "The order is finished"
+		},
+		"cancelled": "The order was cancelled"
+	},
+	"orderActions": {
+		"start": "Start work",
+		"started": "The order is in progress",
+		"complete": "Mark as completed",
+		"completeTitle": "Confirm completion?",
+		"completeText": "Mark it once the furniture is made and you have received it.",
+		"completed": "The order is completed",
+		"cancel": "Cancel order",
+		"cancelTitle": "Cancel the order?",
+		"cancelText": "The order leaves the workshops' feed, and pending offers close.",
+		"cancelled": "The order is cancelled"
+	},
+	"orderPage": {
+		"backToOrders": "My orders",
+		"backToMarket": "Order feed",
+		"until": "by {{date}}",
+		"notFound": "The order is not available",
+		"notFoundText": "It was deleted or has gone to another workshop.",
+		"noModel": "Could not open the model",
+		"notes": "Client's wishes",
+		"reference": "Sample",
+		"progress": "Order progress",
+		"offers": "Workshop offers",
+		"noOffersYet": "No offers yet. Workshops in your city can already see the order.",
+		"noOffers": "There were no offers.",
+		"workshop": "Workshop",
+		"workshopContact": "Workshop contacts",
+		"clientContact": "Client contacts",
+		"myOffer": "Your offer",
+		"sendOffer": "Send an offer",
+		"closed": "The order no longer accepts offers."
+	},
+	"offer": {
+		"price": "Price",
+		"days": "Time frame, days",
+		"daysValue_one": "{{count}} day",
+		"daysValue_other": "{{count}} days",
+		"comment": "Comment",
+		"commentHint": "Materials, hardware and what the price includes: delivery, assembly.",
+		"send": "Send offer",
+		"save": "Save changes",
+		"sent": "The offer was sent to the client",
+		"updated": "The offer is updated",
+		"edit": "Edit",
+		"withdraw": "Withdraw",
+		"withdrawTitle": "Withdraw the offer?",
+		"withdrawText": "The client will no longer see your offer. You can respond again later.",
+		"accept": "Choose this workshop",
+		"acceptTitle": "Choose \"{{name}}\"?",
+		"acceptText": "Other offers close, and you and the workshop see each other's contacts.",
+		"accepted": "Workshop chosen, contacts are open"
+	},
+	"market": {
+		"title": "Order feed",
+		"description": "Client projects with a model and sizes. Respond to the ones you can make.",
+		"type": "Furniture type",
+		"allTypes": "All",
+		"emptyTitle": "No matching orders",
+		"emptyText": "Try another city or furniture type. New orders appear here as soon as they are published.",
+		"lockedTitle": "The feed is for workshops",
+		"lockedText": "Fill in the workshop application. Client orders appear here once it is verified.",
+		"toWorkshop": "Fill in the application"
+	},
+	"myOffers": {
+		"title": "My offers",
+		"description": "Your workshop's offers and what clients decided.",
+		"emptyTitle": "No offers yet",
+		"emptyText": "Find a suitable order in the feed and offer a price and a time frame.",
+		"toMarket": "Open the feed"
+	},
+	"workshop": {
+		"eyebrow": "Workshop",
+		"applyTitle": "Workshop application",
+		"applyText": "Tell us about your workshop. A moderator checks the details, and then the order feed opens for you.",
+		"website": "Website",
+		"reason": "Reason",
+		"toMarket": "Open the order feed",
+		"status": {
+			"pending": {
+				"title": "Application under review",
+				"text": "The review usually takes up to one working day. You can still update the application."
+			},
+			"approved": {
+				"title": "Workshop verified",
+				"text": "Respond to orders: clients see your prices and time frames."
+			},
+			"rejected": {
+				"title": "Application rejected",
+				"text": "Fix the details and send the application again."
+			}
+		},
+		"form": {
+			"name": "Workshop name",
+			"city": "City",
+			"phone": "Phone for clients",
+			"taxId": "BIN or IIN",
+			"taxIdHint": "12 digits. It lets clients work with real workshops",
+			"website": "Website or Instagram",
+			"websiteHint": "Optional, but a portfolio helps you win orders",
+			"types": "What you make",
+			"description": "About the workshop",
+			"descriptionHint": "Experience, materials, equipment, delivery and assembly.",
+			"submit": "Send for review",
+			"save": "Save",
+			"sent": "The application was sent for review",
+			"saved": "Workshop details saved"
+		},
+		"whyTitle": "Why we verify",
+		"why": {
+			"one": "Clients share their projects and contacts only with real workshops.",
+			"two": "A verified workshop sees every order in its city.",
+			"three": "No spam: every offer comes from a verified maker."
+		}
+	},
+	"moderation": {
+		"title": "Workshop moderation",
+		"description": "Check the company details and portfolio. Approval gives the workshop access to the order feed.",
+		"filter": "Status",
+		"applied": "Applied on {{date}}",
+		"owner": "Owner",
+		"approve": "Approve",
+		"approved": "\"{{name}}\" is approved",
+		"reject": "Reject",
+		"revoke": "Revoke access",
+		"rejectTitle": "Reject \"{{name}}\"?",
+		"rejectText": "The workshop owner will see the reason. They can fix the application and send it again.",
+		"reason": "Reason",
+		"rejected": "\"{{name}}\" is rejected",
+		"emptyTitle": "Nothing here",
+		"emptyText": "There are no applications with this status."
 	}
 }
