@@ -20,7 +20,8 @@ export const listMyOffersQueryLimitMax = 100;
 
 export const ListMyOffersQueryParams = zod.object({
   "offset": zod.int().min(listMyOffersQueryOffsetMin).default(listMyOffersQueryOffsetDefault),
-  "limit": zod.int().min(1).max(listMyOffersQueryLimitMax).default(listMyOffersQueryLimitDefault)
+  "limit": zod.int().min(1).max(listMyOffersQueryLimitMax).default(listMyOffersQueryLimitDefault),
+  "tab": zod.union([zod.enum(['active', 'archive']).describe('Tab of the workshop\'s offer list: active = still waiting or being worked on.'),zod.null()]).optional().describe('Only offers of this tab')
 })
 
 export const ListMyOffersResponse = zod.object({
@@ -30,6 +31,10 @@ export const ListMyOffersResponse = zod.object({
   "price": zod.int(),
   "days": zod.int(),
   "comment": zod.string(),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "includesDelivery": zod.boolean(),
+  "includesInstallation": zod.boolean(),
+  "prepaymentPercent": zod.union([zod.int(),zod.null()]),
   "status": zod.enum(['pending', 'accepted', 'rejected', 'withdrawn']),
   "createdAt": zod.iso.datetime({"offset":true}),
   "updatedAt": zod.iso.datetime({"offset":true}),
@@ -44,7 +49,11 @@ export const ListMyOffersResponse = zod.object({
   "status": zod.enum(['published', 'assigned', 'in_progress', 'completed', 'cancelled'])
 })
 })),
-  "total": zod.int()
+  "total": zod.int(),
+  "counts": zod.object({
+  "active": zod.int(),
+  "archive": zod.int()
+}).describe('Offers in each tab, regardless of the filter')
 })
 
 /**
@@ -62,12 +71,24 @@ export const updateOfferBodyDaysMax = 365;
 export const updateOfferBodyCommentDefault = ``;
 export const updateOfferBodyCommentMax = 2000;
 
+export const updateOfferBodyWarrantyMonthsOneMin = 0;
+export const updateOfferBodyWarrantyMonthsOneMax = 120;
+
+export const updateOfferBodyIncludesDeliveryDefault = false;
+export const updateOfferBodyIncludesInstallationDefault = false;
+export const updateOfferBodyPrepaymentPercentOneMin = 0;
+export const updateOfferBodyPrepaymentPercentOneMax = 100;
+
 
 
 export const UpdateOfferBody = zod.object({
   "price": zod.int().min(updateOfferBodyPriceMin).max(updateOfferBodyPriceMax).describe('KZT'),
   "days": zod.int().min(1).max(updateOfferBodyDaysMax),
-  "comment": zod.string().max(updateOfferBodyCommentMax).default(updateOfferBodyCommentDefault)
+  "comment": zod.string().max(updateOfferBodyCommentMax).default(updateOfferBodyCommentDefault),
+  "warrantyMonths": zod.union([zod.int().min(updateOfferBodyWarrantyMonthsOneMin).max(updateOfferBodyWarrantyMonthsOneMax),zod.null()]).optional(),
+  "includesDelivery": zod.boolean().default(updateOfferBodyIncludesDeliveryDefault),
+  "includesInstallation": zod.boolean().default(updateOfferBodyIncludesInstallationDefault),
+  "prepaymentPercent": zod.union([zod.int().min(updateOfferBodyPrepaymentPercentOneMin).max(updateOfferBodyPrepaymentPercentOneMax),zod.null()]).optional()
 })
 
 export const UpdateOfferResponse = zod.object({
@@ -76,6 +97,10 @@ export const UpdateOfferResponse = zod.object({
   "price": zod.int(),
   "days": zod.int(),
   "comment": zod.string(),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "includesDelivery": zod.boolean(),
+  "includesInstallation": zod.boolean(),
+  "prepaymentPercent": zod.union([zod.int(),zod.null()]),
   "status": zod.enum(['pending', 'accepted', 'rejected', 'withdrawn']),
   "createdAt": zod.iso.datetime({"offset":true}),
   "updatedAt": zod.iso.datetime({"offset":true})
@@ -94,6 +119,10 @@ export const WithdrawOfferResponse = zod.object({
   "price": zod.int(),
   "days": zod.int(),
   "comment": zod.string(),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "includesDelivery": zod.boolean(),
+  "includesInstallation": zod.boolean(),
+  "prepaymentPercent": zod.union([zod.int(),zod.null()]),
   "status": zod.enum(['pending', 'accepted', 'rejected', 'withdrawn']),
   "createdAt": zod.iso.datetime({"offset":true}),
   "updatedAt": zod.iso.datetime({"offset":true})
@@ -112,6 +141,10 @@ export const AcceptOfferResponse = zod.object({
   "price": zod.int(),
   "days": zod.int(),
   "comment": zod.string(),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "includesDelivery": zod.boolean(),
+  "includesInstallation": zod.boolean(),
+  "prepaymentPercent": zod.union([zod.int(),zod.null()]),
   "status": zod.enum(['pending', 'accepted', 'rejected', 'withdrawn']),
   "createdAt": zod.iso.datetime({"offset":true}),
   "updatedAt": zod.iso.datetime({"offset":true})

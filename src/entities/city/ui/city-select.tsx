@@ -14,6 +14,8 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { useCities } from '../model/use-cities'
 
+export type CityPreset = { key: string; label: string; active: boolean; onSelect: () => void }
+
 type Props = {
 	id?: string
 	/** City id */
@@ -22,15 +24,36 @@ type Props = {
 	/** Adds an "all cities" option that calls onClear */
 	allowAll?: boolean
 	onClear?: () => void
+	/** Choices shown above the cities, e.g. "my cities"; the active one names the trigger */
+	presets?: CityPreset[]
+	/** Cities that cannot be picked, e.g. already chosen */
+	exclude?: string[]
+	placeholder?: string
 	invalid?: boolean
 	className?: string
 }
 
-export function CitySelect({ id, value, onChange, allowAll, onClear, invalid, className }: Props) {
+export function CitySelect({
+	id,
+	value,
+	onChange,
+	allowAll,
+	onClear,
+	presets = [],
+	exclude = [],
+	placeholder,
+	invalid,
+	className,
+}: Props) {
 	const { t } = useTranslation()
 	const { cities } = useCities()
 	const [open, setOpen] = useState(false)
 	const selected = cities.find((city) => city.id === value)
+	const preset = presets.find((item) => item.active)
+	const label =
+		selected?.name ??
+		preset?.label ??
+		(allowAll ? t('city.all') : (placeholder ?? t('city.placeholder')))
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
@@ -46,8 +69,8 @@ export function CitySelect({ id, value, onChange, allowAll, onClear, invalid, cl
 				>
 					<span className="flex min-w-0 items-center gap-2">
 						<MapPin className="text-muted-foreground" />
-						<span className={cn('truncate', !selected && 'text-muted-foreground')}>
-							{selected ? selected.name : allowAll ? t('city.all') : t('city.placeholder')}
+						<span className={cn('truncate', !selected && !preset && 'text-muted-foreground')}>
+							{label}
 						</span>
 					</span>
 					<ChevronDown className="text-muted-foreground" />
@@ -59,6 +82,19 @@ export function CitySelect({ id, value, onChange, allowAll, onClear, invalid, cl
 					<CommandList>
 						<CommandEmpty>{t('city.notFound')}</CommandEmpty>
 						<CommandGroup>
+							{presets.map((item) => (
+								<CommandItem
+									key={item.key}
+									value={item.label}
+									onSelect={() => {
+										item.onSelect()
+										setOpen(false)
+									}}
+								>
+									<Check className={cn('size-4', item.active ? 'opacity-100' : 'opacity-0')} />
+									{item.label}
+								</CommandItem>
+							))}
 							{allowAll && (
 								<CommandItem
 									value={t('city.all')}
@@ -71,21 +107,23 @@ export function CitySelect({ id, value, onChange, allowAll, onClear, invalid, cl
 									{t('city.all')}
 								</CommandItem>
 							)}
-							{cities.map((city) => (
-								<CommandItem
-									key={city.id}
-									value={`${city.name} ${city.slug}`}
-									onSelect={() => {
-										onChange(city.id)
-										setOpen(false)
-									}}
-								>
-									<Check
-										className={cn('size-4', value === city.id ? 'opacity-100' : 'opacity-0')}
-									/>
-									{city.name}
-								</CommandItem>
-							))}
+							{cities
+								.filter((city) => !exclude.includes(city.id))
+								.map((city) => (
+									<CommandItem
+										key={city.id}
+										value={`${city.name} ${city.slug}`}
+										onSelect={() => {
+											onChange(city.id)
+											setOpen(false)
+										}}
+									>
+										<Check
+											className={cn('size-4', value === city.id ? 'opacity-100' : 'opacity-0')}
+										/>
+										{city.name}
+									</CommandItem>
+								))}
 						</CommandGroup>
 					</CommandList>
 				</Command>

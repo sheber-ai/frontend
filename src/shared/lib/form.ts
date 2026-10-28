@@ -1,4 +1,6 @@
 import type { TFunction } from 'i18next'
+import { z } from 'zod'
+import { isValidPhone } from './phone'
 
 export const FORM_ERRORS = [
 	'form.required',
@@ -11,6 +13,9 @@ export const FORM_ERRORS = [
 	'form.minPrice',
 	'form.pastDate',
 	'form.pickOne',
+	'form.year',
+	'form.number',
+	'form.percent',
 ] as const
 
 export type FormErrorKey = (typeof FORM_ERRORS)[number]
@@ -27,8 +32,8 @@ export function formError(
 	return t(isFormErrorKey(error.message) ? error.message : 'form.invalid')
 }
 
-/** Kazakhstan mobile in any common spelling: +7 701 123-45-67, 8(701)1234567 */
-export const PHONE_PATTERN = /^(\+7|8|7)?[\s(-]*\d{3}[\s)-]*\d{3}[\s-]*\d{2}[\s-]*\d{2}$/
+/** Value of PhoneInput: required, complete and existing (E.164). */
+export const phoneField = () => z.string().refine(isValidPhone, 'form.phone')
 
 /** Digits only, so "450 000" and "450000" mean the same. */
 export function parseAmount(value: string | undefined): number | null {

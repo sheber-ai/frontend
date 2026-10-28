@@ -9,9 +9,10 @@ import {
 	type ViewMode,
 	validateDocument,
 } from '@/entities/furniture'
+import { AttachmentGallery } from '@/features/manage-attachments'
 import { PublishOrderDialog } from '@/features/publish-order'
 import type { DesignSchema } from '@/shared/api/generated/model'
-import { ArrowLeft, Redo2, Send, Undo2 } from '@/shared/design'
+import { ArrowLeft, ClipboardList, Redo2, Send, Undo2 } from '@/shared/design'
 import { cn } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
@@ -22,7 +23,7 @@ import { CheckPanel } from './check-panel'
 import { SaveIndicator } from './save-indicator'
 import { SectionPanel } from './section-panel'
 
-type Tab = 'section' | 'body' | 'check'
+type Tab = 'section' | 'body' | 'files' | 'check'
 
 type Props = { design: DesignSchema; document: DesignDocument }
 
@@ -73,9 +74,20 @@ export function DesignEditor({ design, document: initial }: Props) {
 		return () => window.removeEventListener('keydown', onKey)
 	}, [undo, redo, select])
 
-	const publish = (
+	// One unfinished order per design: open it instead of publishing a duplicate
+	const publish = design.activeOrder ? (
+		<Button asChild variant="outline" className="w-full lg:w-auto">
+			<Link to="/orders/$orderId" params={{ orderId: design.activeOrder.id }}>
+				<ClipboardList />
+				{t('editor.openOrder')}
+			</Link>
+		</Button>
+	) : (
 		<PublishOrderDialog
 			designId={design.id}
+			document={doc}
+			warnings={issues.length - errorCount}
+			onShowFiles={() => setTab('files')}
 			beforePublish={flush}
 			blocked={blocked}
 			onShowIssues={() => setTab('check')}
@@ -148,9 +160,10 @@ export function DesignEditor({ design, document: initial }: Props) {
 					className="gap-0 lg:min-h-0 lg:flex-1"
 				>
 					<div className="sticky top-16 z-10 border-b bg-card/95 px-3 py-2 backdrop-blur lg:static">
-						<TabsList className="grid w-full grid-cols-3">
+						<TabsList className="grid w-full grid-cols-4">
 							<TabsTrigger value="section">{t('editor.tabs.section')}</TabsTrigger>
 							<TabsTrigger value="body">{t('editor.tabs.body')}</TabsTrigger>
+							<TabsTrigger value="files">{t('editor.tabs.files')}</TabsTrigger>
 							<TabsTrigger value="check" className="gap-1.5">
 								{t('editor.tabs.check')}
 								{issues.length > 0 && (
@@ -181,6 +194,19 @@ export function DesignEditor({ design, document: initial }: Props) {
 						</TabsContent>
 						<TabsContent value="body">
 							<BodyPanel document={doc} apply={editor.apply} />
+						</TabsContent>
+						<TabsContent value="files">
+							<div className="flex flex-col gap-6 p-4">
+								<p className="text-body-sm text-muted-foreground">{t('editor.filesHint')}</p>
+								{(['reference', 'room', 'document'] as const).map((purpose) => (
+									<AttachmentGallery
+										key={purpose}
+										purpose={purpose}
+										target={{ designId: design.id }}
+										editable
+									/>
+								))}
+							</div>
 						</TabsContent>
 						<TabsContent value="check">
 							<CheckPanel

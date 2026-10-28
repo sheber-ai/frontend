@@ -6,6 +6,8 @@
  */
 import type { FurnitureTypeEnum } from './furnitureTypeEnum';
 import type { Phone } from './phone';
+import type { WorkshopMaterialEnum } from './workshopMaterialEnum';
+import type { WorkshopServiceEnum } from './workshopServiceEnum';
 
 export interface WorkshopSaveSchema {
   /**
@@ -14,6 +16,11 @@ export interface WorkshopSaveSchema {
      */
   name: string;
   cityId: string;
+  /**
+     * Other cities served; the main city is ignored here
+     * @maxItems 20
+     */
+  serviceCityIds?: string[];
   phone: Phone;
   /**
      * BIN or IIN, 12 digits
@@ -25,4 +32,8 @@ export interface WorkshopSaveSchema {
   website?: string | null;
   /** @minItems 1 */
   furnitureTypes: FurnitureTypeEnum[];
+  services?: WorkshopServiceEnum[];
+  materials?: WorkshopMaterialEnum[];
+  warrantyMonths?: number | null;
+  foundedYear?: number | null;
 }

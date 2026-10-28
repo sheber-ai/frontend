@@ -1,2 +1,3 @@
 export { useCities } from './model/use-cities'
-export { CitySelect } from './ui/city-select'
+export { CityMultiSelect } from './ui/city-multi-select'
+export { type CityPreset, CitySelect } from './ui/city-select'

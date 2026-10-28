@@ -1,12 +1,13 @@
 import { ContactShadows, Edges, Line, OrbitControls } from '@react-three/drei'
 import { Canvas, type ThreeEvent, useFrame, useThree } from '@react-three/fiber'
-import { type RefObject, useEffect, useMemo, useRef } from 'react'
+import { type RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { HARDWARE, MATERIALS, SCENE_COLORS } from '@/shared/design'
 import { cn } from '@/shared/lib/utils'
 import { luminance, mix } from '../lib/color'
 import { labelTexture } from '../lib/label-texture'
 import { surfaceTexture } from '../lib/surface-texture'
+import { type CameraView, cameraPosition } from '../model/camera'
 import { BACK, type DesignDocument } from '../model/document'
 import { computeLayout, type Layout } from '../model/layout'
 import { type Box, buildParts, type Part, type PartMaterial } from '../model/parts'
@@ -18,6 +19,10 @@ export type DesignSceneProps = {
 	/** Doors swing open, drawers slide out, sliding panels fade */
 	open?: boolean
 	showDimensions?: boolean
+	/** Requested camera angle; bump `key` to apply the same view again (reset) */
+	view?: { name: CameraView; key: number }
+	/** WebGL failed or the GPU dropped the context */
+	onRenderError?: () => void
 	className?: string
 }
 
@@ -390,41 +395,71 @@ function Model({
 	)
 }
 
-/** Camera distance that fits the piece with its dimension lines into both field-of-view axes. */
-function fitDistance(width: number, height: number, depth: number, aspect: number) {
-	const vertical = Math.tan(THREE.MathUtils.degToRad(FOV / 2))
-	const horizontal = vertical * aspect
-	// Margins leave room for dimension labels around the model
-	const fitHeight = (height * 1.5) / 2 / vertical
-	const fitWidth = (Math.hypot(width, depth) * 1.4) / 2 / horizontal
-	return Math.max(fitHeight, fitWidth) + depth / 2
-}
+const ANIMATION_SECONDS = 0.45
+const reducedMotion = () =>
+	typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
-const VIEW_DIRECTION = new THREE.Vector3(0.42, 0.22, 0.88).normalize()
-
-/** Re-frames the model when the canvas changes shape (phone rotation, panel resize). */
-function CameraFit({ width, height, depth }: { width: number; height: number; depth: number }) {
+/** Puts the camera at the requested view; glides there unless the user prefers reduced motion. */
+function CameraRig({
+	width,
+	height,
+	depth,
+	view,
+}: {
+	width: number
+	height: number
+	depth: number
+	view: { name: CameraView; key: number }
+}) {
 	const camera = useThree((state) => state.camera)
-	const aspect = useThree((state) => state.size.width / Math.max(state.size.height, 1))
+	const canvas = useThree((state) => state.size)
 	const controls = useThree((state) => state.controls) as { update?: () => void } | null
+	const flight = useRef<{ from: THREE.Vector3; to: THREE.Vector3; t: number } | null>(null)
+	const lastKey = useRef<number | null>(null)
+	// The first frames can report a 0×0 canvas: an aspect of 0 would put the camera at infinity
+	const aspect = canvas.width > 0 && canvas.height > 0 ? canvas.width / canvas.height : null
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: refit on canvas shape only, not on every size edit
+	// biome-ignore lint/correctness/useExhaustiveDependencies: refit on canvas shape and view requests, not on every size edit
 	useEffect(() => {
-		const distance = fitDistance(width, height, depth, aspect)
-		camera.position
-			.copy(VIEW_DIRECTION)
-			.multiplyScalar(distance)
-			.add(new THREE.Vector3(0, height / 2, 0))
+		if (aspect === null) return
+		const size = { width, height, depth }
+		const to = new THREE.Vector3(
+			...cameraPosition(view.name, size, [0, height / 2, 0], FOV, aspect),
+		)
+		// Glide only when the user picked a view; a resize or the first placement jumps straight there
+		const requested = lastKey.current !== null && lastKey.current !== view.key
+		lastKey.current = view.key
+		if (!requested || reducedMotion()) {
+			flight.current = null
+			camera.position.copy(to)
+			controls?.update?.()
+			return
+		}
+		flight.current = { from: camera.position.clone(), to, t: 0 }
+	}, [aspect, camera, controls, view.key, view.name])
+
+	useFrame((_, delta) => {
+		const current = flight.current
+		if (!current) return
+		current.t = Math.min(current.t + delta / ANIMATION_SECONDS, 1)
+		const eased = 1 - (1 - current.t) ** 3
+		camera.position.lerpVectors(current.from, current.to, eased)
 		controls?.update?.()
-	}, [aspect, camera, controls])
+		if (current.t === 1) flight.current = null
+	})
 	return null
 }
+
+const DEFAULT_VIEW = { name: 'iso', key: 0 } as const
 
 export function DesignScene(props: DesignSceneProps) {
 	const { width, height, depth } = props.document.size
 	const span = Math.max(width, height, depth) * MM
 	const target: THREE.Vector3Tuple = [0, (height / 2) * MM, 0]
-	const distance = fitDistance(width * MM, height * MM, depth * MM, 1.3)
+	const size = { width: width * MM, height: height * MM, depth: depth * MM }
+	const distance = Math.hypot(...cameraPosition('iso', size, [0, 0, 0], FOV, 1.3))
+	const [lost, setLost] = useState(false)
+	const { onRenderError } = props
 
 	return (
 		<div className={cn('relative size-full touch-none', props.className)}>
@@ -438,6 +473,13 @@ export function DesignScene(props: DesignSceneProps) {
 					far: 60,
 				}}
 				onPointerMissed={() => props.onSelect?.(null)}
+				onCreated={({ gl }) => {
+					gl.domElement.addEventListener('webglcontextlost', (event) => {
+						event.preventDefault()
+						setLost(true)
+						onRenderError?.()
+					})
+				}}
 			>
 				<hemisphereLight args={[SCENE_COLORS.skyLight, SCENE_COLORS.groundLight, 1.1]} />
 				<directionalLight
@@ -452,7 +494,12 @@ export function DesignScene(props: DesignSceneProps) {
 					shadow-camera-bottom={-span * 0.2}
 				/>
 				<directionalLight position={[span * 1.5, span, span * 0.5]} intensity={0.45} />
-				<CameraFit width={width * MM} height={height * MM} depth={depth * MM} />
+				<CameraRig
+					width={size.width}
+					height={size.height}
+					depth={size.depth}
+					view={props.view ?? DEFAULT_VIEW}
+				/>
 				<Model {...props} />
 				<ContactShadows
 					position={[0, 0, 0]}
@@ -467,9 +514,11 @@ export function DesignScene(props: DesignSceneProps) {
 					enablePan={false}
 					minDistance={distance * 0.35}
 					maxDistance={distance * 3}
-					maxPolarAngle={Math.PI * 0.49}
+					// Top view sits on the pole; below the floor makes no sense
+					maxPolarAngle={Math.PI * 0.5}
 				/>
 			</Canvas>
+			{lost && <div className="absolute inset-0 bg-background/60" aria-hidden />}
 		</div>
 	)
 }

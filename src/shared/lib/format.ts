@@ -19,8 +19,43 @@ export function formatDate(value: string | Date, language: string): string {
 	}).format(typeof value === 'string' ? new Date(value) : value)
 }
 
-/** +77011234567 -> +7 701 123 45 67 */
-export function formatPhone(value: string): string {
-	const match = /^\+7(\d{3})(\d{3})(\d{2})(\d{2})$/.exec(value)
-	return match ? `+7 ${match[1]} ${match[2]} ${match[3]} ${match[4]}` : value
+const RELATIVE_STEPS: [Intl.RelativeTimeFormatUnit, number][] = [
+	['minute', 60],
+	['hour', 24],
+	['day', 7],
+	['week', 4.35],
+	['month', 12],
+	['year', Number.POSITIVE_INFINITY],
+]
+
+/** "5 минут назад"; under a minute returns null so the caller can say "just now". */
+export function formatRelativeTime(
+	value: string | Date,
+	language: string,
+	now: Date = new Date(),
+): string | null {
+	const date = typeof value === 'string' ? new Date(value) : value
+	let amount = (date.getTime() - now.getTime()) / 60_000
+	if (Math.abs(amount) < 1) return null
+	const format = new Intl.RelativeTimeFormat(locale(language), { numeric: 'auto' })
+	for (const [unit, size] of RELATIVE_STEPS) {
+		if (Math.abs(amount) < size) return format.format(Math.round(amount), unit)
+		amount /= size
+	}
+	return null
+}
+
+/** Time for today's messages, date and time for older ones. */
+export function formatMessageTime(
+	value: string | Date,
+	language: string,
+	now: Date = new Date(),
+): string {
+	const date = typeof value === 'string' ? new Date(value) : value
+	const sameDay = date.toDateString() === now.toDateString()
+	return new Intl.DateTimeFormat(locale(language), {
+		hour: '2-digit',
+		minute: '2-digit',
+		...(sameDay ? {} : { day: 'numeric', month: 'short' }),
+	}).format(date)
 }

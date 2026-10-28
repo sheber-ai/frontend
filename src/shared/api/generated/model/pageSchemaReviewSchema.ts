@@ -4,9 +4,9 @@
  * Sheber API
  * OpenAPI spec version: 0.1.0
  */
-import type { MyOfferSchema } from './myOfferSchema';
+import type { ReviewSchema } from './reviewSchema';
 
-export interface PageSchemaMyOfferSchema {
-  items: MyOfferSchema[];
+export interface PageSchemaReviewSchema {
+  items: ReviewSchema[];
   total: number;
 }

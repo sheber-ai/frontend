@@ -1,10 +1,16 @@
+import { cn } from '@/shared/lib/utils'
 import { Skeleton } from '@/shared/ui/skeleton'
 
 const KEYS = ['a', 'b', 'c', 'd', 'e', 'f']
 
-export function CardGridSkeleton({ count = 6 }: { count?: number }) {
+export function CardGridSkeleton({ count = 6, className }: { count?: number; className?: string }) {
 	return (
-		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+		<div
+			className={cn(
+				'grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4',
+				className,
+			)}
+		>
 			{KEYS.slice(0, count).map((key) => (
 				<div key={key} className="flex flex-col overflow-hidden rounded-xl border bg-card">
 					<Skeleton className="aspect-[4/3] rounded-none" />

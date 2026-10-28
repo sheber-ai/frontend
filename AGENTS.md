@@ -81,9 +81,9 @@ src/
 
 | Слой | Слайсы |
 |---|---|
-| `entities` | `viewer` (текущий пользователь), `city` (справочник городов, `CitySelect`), `furniture` (документ мебели, ядро конструктора, 3D, чертёж, превью), `order`, `offer`, `workshop` (бейджи статусов, карточки) |
-| `features` | `start-design` (шаблоны, импорт по ссылке/фото), `publish-order`, `send-offer`, `accept-offer`, `manage-order`, `delete-design`, `edit-profile`, `workshop-application`, `moderate-workshop` |
-| `widgets` | `app-header` (навигация по ролям, мобильное меню), `design-editor` (конструктор) |
+| `entities` | `viewer` (текущий пользователь), `city` (справочник городов, `CitySelect`), `furniture` (документ мебели, ядро конструктора, 3D, чертёж, превью), `order`, `offer`, `workshop` (бейджи статусов, карточки), `review` (`RatingStars`, `ReviewItem`) |
+| `features` | `start-design` (шаблоны, импорт по ссылке/фото), `publish-order`, `send-offer`, `accept-offer`, `manage-order`, `delete-design`, `edit-profile`, `workshop-application`, `moderate-workshop`, `order-chat` (переписка по заказу в боковой панели, опрос раз в 10 с), `review-workshop` (отзыв клиента о мастерской по выполненному заказу), `manage-attachments` (`AttachmentGallery`: загрузка с прогрессом, повтор, удаление, обложка, порядок, подписи; один компонент для мастерской, проекта и заказа) |
+| `widgets` | `app-header` (навигация по ролям, мобильное меню, колокольчик уведомлений — опрос `summary` раз в 30 с), `design-editor` (конструктор) |
 | `pages` | `landing`, `welcome` (онбординг), `projects`, `project-new`, `project-editor`, `orders`, `order-details`, `market` (лента мастерских), `my-offers`, `workshop`, `admin-workshops`, `profile`, `design-system` (dev) |
 
 ### Справочники и перечисления
@@ -208,6 +208,8 @@ import { Heading, Text } from '@/shared/ui/typography'
   Все языки — `LANGUAGES`, в интерфейсе доступны только `ENABLED_LANGUAGES` (сейчас ru и kk; английский
   переводится, но пока не показывается). Выбор сохраняется в localStorage и передаётся в Keycloak.
   Исключение — dev-страница `/design`, она не переводится.
+- В основной бандл входит только `ru` (язык по умолчанию и источник типов ключей); `kk` и `en` подгружаются
+  чанками при выборе языка (backend-модуль i18next в `app/i18n`), `main.tsx` ждёт `i18nReady` перед рендером.
 
 ## Конструктор и 3D
 

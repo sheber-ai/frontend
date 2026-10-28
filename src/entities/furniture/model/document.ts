@@ -34,6 +34,9 @@ export type LayoutNode = CellNode | SplitNode
 
 export type FacadeType = 'open' | 'hinged' | 'sliding'
 
+/** `none` is push-to-open: fronts without handles */
+export type HandleType = 'bar' | 'knob' | 'none'
+
 export type Size = { width: number; height: number; depth: number }
 
 export type DesignDocument = {
@@ -42,6 +45,8 @@ export type DesignDocument = {
 	plinth: number
 	materials: { body: MaterialName; fronts: MaterialName }
 	facade: { type: FacadeType; panels: number }
+	/** Added after v1 went live: absent in older documents, which then mean bar handles */
+	hardware?: { handles: HandleType }
 	layout: LayoutNode
 }
 
@@ -71,6 +76,11 @@ export const LIMITS = {
 
 export const FILL_TYPES = ['empty', 'shelves', 'rod', 'drawers'] as const satisfies FillType[]
 export const FACADE_TYPES = ['open', 'hinged', 'sliding'] as const satisfies FacadeType[]
+export const HANDLE_TYPES = ['bar', 'knob', 'none'] as const satisfies HandleType[]
+
+export function handleType(doc: Pick<DesignDocument, 'hardware'>): HandleType {
+	return doc.hardware?.handles ?? 'bar'
+}
 
 const materialSchema = z.enum(Object.keys(MATERIALS) as [MaterialName, ...MaterialName[]])
 const doorSchema = z.object({ hinge: z.enum(['left', 'right', 'double']) })
@@ -113,6 +123,10 @@ const documentSchema = z.object({
 	plinth: z.number(),
 	materials: z.object({ body: materialSchema, fronts: materialSchema }),
 	facade: z.object({ type: z.enum(FACADE_TYPES), panels: z.number().int().default(2) }),
+	hardware: z
+		.object({ handles: z.enum(HANDLE_TYPES) })
+		.nullish()
+		.transform((value) => value ?? undefined),
 	layout: nodeSchema,
 })
 

@@ -4,6 +4,7 @@
  * Sheber API
  * OpenAPI spec version: 0.1.0
  */
+import type { OrderGroupEnum } from './orderGroupEnum';
 
 export type ListMyOrdersParams = {
 /**
@@ -15,4 +16,8 @@ offset?: number;
  * @maximum 100
  */
 limit?: number;
+/**
+ * Only orders of this tab
+ */
+group?: OrderGroupEnum | null;
 };

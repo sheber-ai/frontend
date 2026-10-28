@@ -17,9 +17,17 @@ export const GetMyWorkshopResponse = zod.object({
   "id": zod.uuid(),
   "name": zod.string()
 }).describe('City inside other resources; `name` is in the request language.'),
+  "serviceCities": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+}).describe('City inside other resources; `name` is in the request language.')).describe('Other cities the workshop serves besides `city`'),
   "description": zod.string(),
   "website": zod.union([zod.string(),zod.null()]),
   "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])),
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "foundedYear": zod.union([zod.int(),zod.null()]),
   "createdAt": zod.iso.datetime({"offset":true}),
   "phone": zod.string(),
   "taxId": zod.string(),
@@ -34,6 +42,8 @@ export const GetMyWorkshopResponse = zod.object({
 export const saveMyWorkshopBodyNameMin = 2;
 export const saveMyWorkshopBodyNameMax = 128;
 
+export const saveMyWorkshopBodyServiceCityIdsMax = 20;
+
 export const saveMyWorkshopBodyTaxIdRegExp = new RegExp('^\\d{12}$');
 export const saveMyWorkshopBodyDescriptionDefault = ``;
 export const saveMyWorkshopBodyDescriptionMax = 2000;
@@ -43,16 +53,26 @@ export const saveMyWorkshopBodyWebsiteOneMax = 512;
 
 export const saveMyWorkshopBodyWebsiteOneRegExp = new RegExp('^https?:/');
 
+export const saveMyWorkshopBodyWarrantyMonthsOneMin = 0;
+export const saveMyWorkshopBodyWarrantyMonthsOneMax = 120;
+
+export const saveMyWorkshopBodyFoundedYearOneMin = 1950;
+
 
 
 export const SaveMyWorkshopBody = zod.object({
   "name": zod.string().min(saveMyWorkshopBodyNameMin).max(saveMyWorkshopBodyNameMax),
   "cityId": zod.uuid(),
+  "serviceCityIds": zod.array(zod.uuid()).max(saveMyWorkshopBodyServiceCityIdsMax).optional().describe('Other cities served; the main city is ignored here'),
   "phone": zod.string(),
   "taxId": zod.string().regex(saveMyWorkshopBodyTaxIdRegExp).describe('BIN or IIN, 12 digits'),
   "description": zod.string().max(saveMyWorkshopBodyDescriptionMax).default(saveMyWorkshopBodyDescriptionDefault),
   "website": zod.union([zod.string().max(saveMyWorkshopBodyWebsiteOneMax).regex(saveMyWorkshopBodyWebsiteOneRegExp),zod.null()]).optional(),
-  "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])).min(1)
+  "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])).min(1),
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')).optional(),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')).optional(),
+  "warrantyMonths": zod.union([zod.int().min(saveMyWorkshopBodyWarrantyMonthsOneMin).max(saveMyWorkshopBodyWarrantyMonthsOneMax),zod.null()]).optional(),
+  "foundedYear": zod.union([zod.int().min(saveMyWorkshopBodyFoundedYearOneMin),zod.null()]).optional()
 })
 
 export const SaveMyWorkshopResponse = zod.object({
@@ -62,9 +82,17 @@ export const SaveMyWorkshopResponse = zod.object({
   "id": zod.uuid(),
   "name": zod.string()
 }).describe('City inside other resources; `name` is in the request language.'),
+  "serviceCities": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+}).describe('City inside other resources; `name` is in the request language.')).describe('Other cities the workshop serves besides `city`'),
   "description": zod.string(),
   "website": zod.union([zod.string(),zod.null()]),
   "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])),
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "foundedYear": zod.union([zod.int(),zod.null()]),
   "createdAt": zod.iso.datetime({"offset":true}),
   "phone": zod.string(),
   "taxId": zod.string(),
@@ -98,9 +126,17 @@ export const ListWorkshopsResponse = zod.object({
   "id": zod.uuid(),
   "name": zod.string()
 }).describe('City inside other resources; `name` is in the request language.'),
+  "serviceCities": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+}).describe('City inside other resources; `name` is in the request language.')).describe('Other cities the workshop serves besides `city`'),
   "description": zod.string(),
   "website": zod.union([zod.string(),zod.null()]),
   "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])),
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "foundedYear": zod.union([zod.int(),zod.null()]),
   "createdAt": zod.iso.datetime({"offset":true}),
   "phone": zod.string(),
   "taxId": zod.string(),
@@ -127,11 +163,23 @@ export const GetWorkshopResponse = zod.object({
   "id": zod.uuid(),
   "name": zod.string()
 }).describe('City inside other resources; `name` is in the request language.'),
+  "serviceCities": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+}).describe('City inside other resources; `name` is in the request language.')).describe('Other cities the workshop serves besides `city`'),
   "description": zod.string(),
   "website": zod.union([zod.string(),zod.null()]),
   "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])),
-  "createdAt": zod.iso.datetime({"offset":true})
-})
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "foundedYear": zod.union([zod.int(),zod.null()]),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "completedOrders": zod.int(),
+  "reviewsCount": zod.int(),
+  "ratingAverage": zod.union([zod.number(),zod.null()]).describe('Mean of real reviews, None without reviews'),
+  "verifiedAt": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).describe('When moderation approved the workshop')
+}).describe('Public page of an approved workshop. Figures come from orders on the platform only.')
 
 /**
  * @summary Approve Workshop
@@ -147,9 +195,17 @@ export const ApproveWorkshopResponse = zod.object({
   "id": zod.uuid(),
   "name": zod.string()
 }).describe('City inside other resources; `name` is in the request language.'),
+  "serviceCities": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+}).describe('City inside other resources; `name` is in the request language.')).describe('Other cities the workshop serves besides `city`'),
   "description": zod.string(),
   "website": zod.union([zod.string(),zod.null()]),
   "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])),
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "foundedYear": zod.union([zod.int(),zod.null()]),
   "createdAt": zod.iso.datetime({"offset":true}),
   "phone": zod.string(),
   "taxId": zod.string(),
@@ -181,9 +237,17 @@ export const RejectWorkshopResponse = zod.object({
   "id": zod.uuid(),
   "name": zod.string()
 }).describe('City inside other resources; `name` is in the request language.'),
+  "serviceCities": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+}).describe('City inside other resources; `name` is in the request language.')).describe('Other cities the workshop serves besides `city`'),
   "description": zod.string(),
   "website": zod.union([zod.string(),zod.null()]),
   "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])),
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "foundedYear": zod.union([zod.int(),zod.null()]),
   "createdAt": zod.iso.datetime({"offset":true}),
   "phone": zod.string(),
   "taxId": zod.string(),

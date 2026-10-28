@@ -4,9 +4,12 @@
  * Sheber API
  * OpenAPI spec version: 0.1.0
  */
+import type { OrderGroupCountsSchema } from './orderGroupCountsSchema';
 import type { OrderSchema } from './orderSchema';
 
-export interface PageSchemaOrderSchema {
+export interface MyOrdersPageSchema {
   items: OrderSchema[];
   total: number;
+  /** Orders in each tab, regardless of the filter */
+  counts: OrderGroupCountsSchema;
 }

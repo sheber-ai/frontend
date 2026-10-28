@@ -1,4 +1,4 @@
-import i18n from 'i18next'
+import i18n, { type BackendModule } from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import {
 	DEFAULT_LANGUAGE,
@@ -6,16 +6,34 @@ import {
 	LANGUAGE_STORAGE_KEY,
 	type Language,
 } from '@/shared/config'
-import en from './locales/en.json'
-import kk from './locales/kk.json'
 import ru from './locales/ru.json'
 
 export const defaultNS = 'translation'
 export const resources = {
 	ru: { translation: ru },
-	kk: { translation: kk },
-	en: { translation: en },
 } as const
+
+// Only the default language ships in the main bundle; the others load when chosen
+const LAZY_LOCALES: Partial<Record<Language, () => Promise<{ default: object }>>> = {
+	kk: () => import('./locales/kk.json'),
+	en: () => import('./locales/en.json'),
+}
+
+const lazyLocales: BackendModule = {
+	type: 'backend',
+	init() {},
+	read(language, _namespace, callback) {
+		const load = LAZY_LOCALES[language as Language]
+		if (!load) {
+			callback(null, {})
+			return
+		}
+		load().then(
+			(module) => callback(null, module.default),
+			(error: unknown) => callback(error instanceof Error ? error : String(error), false),
+		)
+	},
+}
 
 function readStoredLanguage(): Language {
 	try {
@@ -35,12 +53,17 @@ i18n.on('languageChanged', (language) => {
 	}
 })
 
-void i18n.use(initReactI18next).init({
-	resources,
-	lng: readStoredLanguage(),
-	fallbackLng: DEFAULT_LANGUAGE,
-	defaultNS,
-	interpolation: { escapeValue: false },
-})
+/** Resolves once the stored language is loaded; render after it to avoid a flash of the fallback. */
+export const i18nReady = i18n
+	.use(lazyLocales)
+	.use(initReactI18next)
+	.init({
+		resources,
+		partialBundledLanguages: true,
+		lng: readStoredLanguage(),
+		fallbackLng: DEFAULT_LANGUAGE,
+		defaultNS,
+		interpolation: { escapeValue: false },
+	})
 
 export { i18n }

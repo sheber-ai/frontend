@@ -11,9 +11,11 @@ type Props = {
 	preview: React.ReactNode
 	/** Extra badge, e.g. the viewer's offer status in the feed */
 	aside?: React.ReactNode
+	/** Bottom line, e.g. what to do next with the order */
+	footer?: React.ReactNode
 }
 
-export function OrderCard({ order, preview, aside }: Props) {
+export function OrderCard({ order, preview, aside, footer }: Props) {
 	const { t, i18n } = useTranslation()
 	return (
 		<Link
@@ -61,6 +63,7 @@ export function OrderCard({ order, preview, aside }: Props) {
 						<dd className="truncate">{t('order.offersCount', { count: order.offersCount })}</dd>
 					</div>
 				</dl>
+				{footer}
 			</div>
 		</Link>
 	)

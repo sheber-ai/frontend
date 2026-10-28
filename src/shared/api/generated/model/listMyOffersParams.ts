@@ -4,6 +4,7 @@
  * Sheber API
  * OpenAPI spec version: 0.1.0
  */
+import type { OfferTabEnum } from './offerTabEnum';
 
 export type ListMyOffersParams = {
 /**
@@ -15,4 +16,8 @@ offset?: number;
  * @maximum 100
  */
 limit?: number;
+/**
+ * Only offers of this tab
+ */
+tab?: OfferTabEnum | null;
 };

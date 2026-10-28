@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { formatNumber } from '@/shared/lib/format'
 import { cn } from '@/shared/lib/utils'
-import type { DesignDocument } from '../model/document'
+import { type DesignDocument, handleType } from '../model/document'
 import { summarizeDesign } from '../model/specs'
 
 type Props = { document: DesignDocument; className?: string }
@@ -31,6 +31,9 @@ export function DesignSpecsList({ document: doc, className }: Props) {
 		[t('specs.drawers'), specs.drawers],
 		[t('specs.doors'), doc.facade.type === 'sliding' ? specs.slidingPanels : specs.doors],
 	]
+	// Handles matter only when there is something to open
+	if (specs.doors + specs.drawers + specs.slidingPanels > 0)
+		rows.push([t('specs.handles'), t(`editor.handles.${handleType(doc)}`)])
 
 	return (
 		<dl className={cn('grid grid-cols-1 gap-y-2 text-body-sm', className)}>

@@ -13,6 +13,10 @@ export interface MyOfferSchema {
   price: number;
   days: number;
   comment: string;
+  warrantyMonths: number | null;
+  includesDelivery: boolean;
+  includesInstallation: boolean;
+  prepaymentPercent: number | null;
   status: OfferStatusEnum;
   createdAt: string;
   updatedAt: string;

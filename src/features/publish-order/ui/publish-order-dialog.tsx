@@ -1,18 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { CitySelect } from '@/entities/city'
+import { type DesignDocument, DesignSpecsList, DesignThumbnail } from '@/entities/furniture'
 import { useViewer } from '@/entities/viewer'
+import { useListAttachments } from '@/shared/api/generated/endpoints/attachments/attachments'
 import {
 	getListMyOrdersQueryKey,
 	useCreateOrder,
 } from '@/shared/api/generated/endpoints/orders/orders'
 import { createOrderBodyDescriptionMax } from '@/shared/api/generated/zod/orders/orders.zod'
-import { Send, TriangleAlert } from '@/shared/design'
+import { ArrowLeft, ArrowRight, Image, Info, Send, TriangleAlert } from '@/shared/design'
 import { formError, parseAmount, todayIso } from '@/shared/lib/form'
 import { useApiErrorToast } from '@/shared/lib/use-api-error'
 import { Button } from '@/shared/ui/button'
@@ -41,6 +43,12 @@ type Values = z.infer<typeof schema>
 
 type Props = {
 	designId: string
+	/** The design as it will be published, for the review step */
+	document: DesignDocument
+	/** Remarks that do not block publishing */
+	warnings?: number
+	/** Opens the editor tab with photos and documents */
+	onShowFiles?: () => void
 	/** Saves pending edits; publishing stops if it fails */
 	beforePublish?: () => Promise<boolean>
 	/** The design has errors: the dialog explains instead of showing the form */
@@ -49,8 +57,94 @@ type Props = {
 	children: React.ReactNode
 }
 
+const FILE_PURPOSES = ['reference', 'room', 'document'] as const
+
+function Review({
+	designId,
+	document,
+	warnings,
+	onShowFiles,
+	close,
+}: {
+	designId: string
+	document: DesignDocument
+	warnings: number
+	onShowFiles?: () => void
+	close: () => void
+}) {
+	const { t } = useTranslation()
+	const { viewer } = useViewer()
+	const { data } = useListAttachments({ designId })
+	const count = (purpose: string) =>
+		data?.items.filter((item) => item.purpose === purpose).length ?? 0
+	return (
+		<div className="flex flex-col gap-4">
+			<div className="grid grid-cols-1 gap-4 sm:grid-cols-[8rem_minmax(0,1fr)]">
+				<div className="aspect-square rounded-lg border bg-blueprint p-3 max-sm:hidden">
+					<DesignThumbnail document={document} />
+				</div>
+				<DesignSpecsList document={document} />
+			</div>
+			<section className="flex flex-col gap-2 rounded-lg border p-3">
+				<div className="flex items-center justify-between gap-2">
+					<p className="flex items-center gap-2 text-body-sm font-medium">
+						<Image className="size-4 text-muted-foreground" />
+						{t('publish.files')}
+					</p>
+					{onShowFiles && (
+						<Button
+							type="button"
+							variant="ghost"
+							size="sm"
+							onClick={() => {
+								close()
+								onShowFiles()
+							}}
+						>
+							{t('publish.editFiles')}
+						</Button>
+					)}
+				</div>
+				<ul className="flex flex-wrap gap-x-4 gap-y-1 text-body-sm text-muted-foreground">
+					{FILE_PURPOSES.map((purpose) => (
+						<li key={purpose}>
+							{t(`attachments.purposes.${purpose}.title`)}: {count(purpose)}
+						</li>
+					))}
+				</ul>
+				{data && count('room') === 0 && (
+					<p className="text-body-sm text-muted-foreground">{t('publish.noRoomPhotos')}</p>
+				)}
+			</section>
+			{warnings > 0 && (
+				<p className="flex items-start gap-2 text-body-sm text-muted-foreground">
+					<Info className="mt-0.5 size-4 shrink-0" />
+					{t('publish.warnings', { count: warnings })}
+				</p>
+			)}
+			{viewer && !viewer.phone && (
+				<p
+					role="alert"
+					className="flex items-start gap-2 rounded-lg bg-warning/15 p-3 text-body-sm"
+				>
+					<TriangleAlert className="mt-0.5 size-4 shrink-0" />
+					<span>
+						{t('errors.profile_incomplete')}{' '}
+						<Link to="/profile" className="font-medium underline underline-offset-4">
+							{t('publish.toProfile')}
+						</Link>
+					</span>
+				</p>
+			)}
+		</div>
+	)
+}
+
 export function PublishOrderDialog({
 	designId,
+	document,
+	warnings = 0,
+	onShowFiles,
 	beforePublish,
 	blocked,
 	onShowIssues,
@@ -59,6 +153,7 @@ export function PublishOrderDialog({
 	const { t } = useTranslation()
 	const { viewer } = useViewer()
 	const [open, setOpen] = useState(false)
+	const [step, setStep] = useState<'review' | 'details'>('review')
 	const navigate = useNavigate()
 	const queryClient = useQueryClient()
 	const showError = useApiErrorToast()
@@ -92,9 +187,15 @@ export function PublishOrderDialog({
 	})
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
+		<Dialog
+			open={open}
+			onOpenChange={(value) => {
+				setOpen(value)
+				if (value) setStep('review')
+			}}
+		>
 			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent className="sm:max-w-lg">
+			<DialogContent className="max-h-[92svh] overflow-y-auto sm:max-w-lg">
 				{blocked ? (
 					<>
 						<DialogHeader>
@@ -115,6 +216,26 @@ export function PublishOrderDialog({
 							</Button>
 						</DialogFooter>
 					</>
+				) : step === 'review' ? (
+					<div className="flex flex-col gap-5">
+						<DialogHeader>
+							<DialogTitle>{t('publish.reviewTitle')}</DialogTitle>
+							<DialogDescription>{t('publish.reviewText')}</DialogDescription>
+						</DialogHeader>
+						<Review
+							designId={designId}
+							document={document}
+							warnings={warnings}
+							onShowFiles={onShowFiles}
+							close={() => setOpen(false)}
+						/>
+						<DialogFooter>
+							<Button className="w-full sm:w-auto" onClick={() => setStep('details')}>
+								{t('publish.next')}
+								<ArrowRight />
+							</Button>
+						</DialogFooter>
+					</div>
 				) : (
 					<form onSubmit={submit} className="flex flex-col gap-5" noValidate>
 						<DialogHeader>
@@ -145,7 +266,7 @@ export function PublishOrderDialog({
 							<Field
 								label={t('publish.budget')}
 								htmlFor="publish-budget"
-								hint={t('publish.optional')}
+								hint={t('publish.budgetHint')}
 								error={formError(t, errors.budget)}
 							>
 								<div className="relative">
@@ -193,7 +314,16 @@ export function PublishOrderDialog({
 							/>
 						</Field>
 
-						<DialogFooter>
+						<DialogFooter className="gap-2">
+							<Button
+								type="button"
+								variant="ghost"
+								className="w-full sm:w-auto"
+								onClick={() => setStep('review')}
+							>
+								<ArrowLeft />
+								{t('common.back')}
+							</Button>
 							<Button type="submit" disabled={isPending} className="w-full sm:w-auto">
 								<Send />
 								{t('publish.submit')}

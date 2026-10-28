@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { DesignCard } from '@/entities/furniture'
+import { OrderStatusBadge } from '@/entities/order'
 import { DeleteDesignButton } from '@/features/delete-design'
 import { useListDesigns } from '@/shared/api/generated/endpoints/designs/designs'
 import { Box, Plus } from '@/shared/design'
@@ -38,6 +39,11 @@ export function ProjectsPage() {
 							key={design.id}
 							design={design}
 							actions={<DeleteDesignButton designId={design.id} title={design.title} />}
+							badge={
+								design.activeOrder ? (
+									<OrderStatusBadge status={design.activeOrder.status} />
+								) : undefined
+							}
 						/>
 					))}
 				</div>

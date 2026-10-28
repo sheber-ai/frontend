@@ -5,8 +5,12 @@ import { FurnitureTypeEnum } from '@/shared/api/generated/model'
 import { requireAuth } from '@/shared/auth'
 
 const searchSchema = z.object({
-	city: z.uuid().optional().catch(undefined),
+	city: z
+		.union([z.uuid(), z.literal('all')])
+		.optional()
+		.catch(undefined),
 	type: z.enum(FurnitureTypeEnum).optional().catch(undefined),
+	fresh: z.boolean().optional().catch(undefined),
 })
 
 export const Route = createFileRoute('/market/')({

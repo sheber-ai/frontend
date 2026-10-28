@@ -19,4 +19,8 @@ export interface OfferCreateSchema {
   days: number;
   /** @maxLength 2000 */
   comment?: string;
+  warrantyMonths?: number | null;
+  includesDelivery?: boolean;
+  includesInstallation?: boolean;
+  prepaymentPercent?: number | null;
 }

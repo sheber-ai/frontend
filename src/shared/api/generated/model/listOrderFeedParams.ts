@@ -18,4 +18,12 @@ offset?: number;
 limit?: number;
 cityId?: string | null;
 furnitureType?: FurnitureTypeEnum | null;
+/**
+ * Hide orders the workshop already responded to
+ */
+withoutMyOffer?: boolean;
+/**
+ * Only orders from the cities the workshop serves
+ */
+myCities?: boolean;
 };

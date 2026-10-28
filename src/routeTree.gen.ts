@@ -22,6 +22,7 @@ import { Route as OrdersOrderIdRouteImport } from './routes/orders/$orderId'
 import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
 import { Route as ProjectsDesignIdRouteImport } from './routes/projects/$designId'
 import { Route as ProjectsNewRouteImport } from './routes/projects/new'
+import { Route as WorkshopsWorkshopIdRouteImport } from './routes/workshops/$workshopId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -88,6 +89,11 @@ const ProjectsNewRoute = ProjectsNewRouteImport.update({
   path: '/projects/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WorkshopsWorkshopIdRoute = WorkshopsWorkshopIdRouteImport.update({
+  id: '/workshops/$workshopId',
+  path: '/workshops/$workshopId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/orders/$orderId': typeof OrdersOrderIdRoute
   '/projects/$designId': typeof ProjectsDesignIdRoute
   '/projects/new': typeof ProjectsNewRoute
+  '/workshops/$workshopId': typeof WorkshopsWorkshopIdRoute
   '/market/': typeof MarketIndexRoute
   '/orders/': typeof OrdersIndexRoute
   '/projects/': typeof ProjectsIndexRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/orders/$orderId': typeof OrdersOrderIdRoute
   '/projects/$designId': typeof ProjectsDesignIdRoute
   '/projects/new': typeof ProjectsNewRoute
+  '/workshops/$workshopId': typeof WorkshopsWorkshopIdRoute
   '/market': typeof MarketIndexRoute
   '/orders': typeof OrdersIndexRoute
   '/projects': typeof ProjectsIndexRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/orders/$orderId': typeof OrdersOrderIdRoute
   '/projects/$designId': typeof ProjectsDesignIdRoute
   '/projects/new': typeof ProjectsNewRoute
+  '/workshops/$workshopId': typeof WorkshopsWorkshopIdRoute
   '/market/': typeof MarketIndexRoute
   '/orders/': typeof OrdersIndexRoute
   '/projects/': typeof ProjectsIndexRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/orders/$orderId'
     | '/projects/$designId'
     | '/projects/new'
+    | '/workshops/$workshopId'
     | '/market/'
     | '/orders/'
     | '/projects/'
@@ -163,6 +173,7 @@ export interface FileRouteTypes {
     | '/orders/$orderId'
     | '/projects/$designId'
     | '/projects/new'
+    | '/workshops/$workshopId'
     | '/market'
     | '/orders'
     | '/projects'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/orders/$orderId'
     | '/projects/$designId'
     | '/projects/new'
+    | '/workshops/$workshopId'
     | '/market/'
     | '/orders/'
     | '/projects/'
@@ -194,6 +206,7 @@ export interface RootRouteChildren {
   OrdersOrderIdRoute: typeof OrdersOrderIdRoute
   ProjectsDesignIdRoute: typeof ProjectsDesignIdRoute
   ProjectsNewRoute: typeof ProjectsNewRoute
+  WorkshopsWorkshopIdRoute: typeof WorkshopsWorkshopIdRoute
   MarketIndexRoute: typeof MarketIndexRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/workshops/$workshopId': {
+      id: '/workshops/$workshopId'
+      path: '/workshops/$workshopId'
+      fullPath: '/workshops/$workshopId'
+      preLoaderRoute: typeof WorkshopsWorkshopIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -306,6 +326,7 @@ const rootRouteChildren: RootRouteChildren = {
   OrdersOrderIdRoute: OrdersOrderIdRoute,
   ProjectsDesignIdRoute: ProjectsDesignIdRoute,
   ProjectsNewRoute: ProjectsNewRoute,
+  WorkshopsWorkshopIdRoute: WorkshopsWorkshopIdRoute,
   MarketIndexRoute: MarketIndexRoute,
   OrdersIndexRoute: OrdersIndexRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,

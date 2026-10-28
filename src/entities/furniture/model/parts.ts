@@ -4,6 +4,7 @@ import {
 	FRONT,
 	FRONT_GAP,
 	type Hinge,
+	handleType,
 	PANEL,
 	SHELF_INSET,
 } from './document'
@@ -103,6 +104,23 @@ function carcass(doc: DesignDocument, layout: Layout): Part[] {
 	return parts
 }
 
+const KNOB = 28
+
+/** Bar as designed, a small knob at its centre, or nothing for push-to-open fronts. */
+function shapeHandle(doc: DesignDocument, bar: Box): Box | undefined {
+	const type = handleType(doc)
+	if (type === 'none') return undefined
+	if (type === 'bar') return bar
+	return {
+		x: bar.x + bar.w / 2 - KNOB / 2,
+		y: bar.y + bar.h / 2 - KNOB / 2,
+		z: bar.z,
+		w: KNOB,
+		h: KNOB,
+		d: bar.d,
+	}
+}
+
 function verticalHandle(front: Rect, side: 'left' | 'right', z: number): Box {
 	const length = Math.min(200, front.h * 0.35)
 	// Tall doors get the handle at arm height, low ones in the middle
@@ -160,7 +178,10 @@ function doors(doc: DesignDocument, layout: Layout): Part[] {
 				material: 'fronts',
 				nodeId: id,
 				box: box(leaf.rect, depth, FRONT),
-				handle: verticalHandle(leaf.rect, leaf.hinge === 'left' ? 'right' : 'left', depth + FRONT),
+				handle: shapeHandle(
+					doc,
+					verticalHandle(leaf.rect, leaf.hinge === 'left' ? 'right' : 'left', depth + FRONT),
+				),
 				motion: { type: 'hinge', pivotX, pivotZ: depth, direction: leaf.hinge === 'left' ? -1 : 1 },
 			})
 		}
@@ -238,14 +259,14 @@ function fills(doc: DesignDocument, layout: Layout): Part[] {
 					material: inside ? 'body' : 'fronts',
 					nodeId: id,
 					box: box(front, frontZ, FRONT),
-					handle: {
+					handle: shapeHandle(doc, {
 						x: front.x + (front.w - handleWidth) / 2,
 						y: front.y + front.h - Math.min(60, front.h / 3),
 						z: frontZ + FRONT,
 						w: handleWidth,
 						h: HANDLE_THICKNESS,
 						d: HANDLE_DEPTH,
-					},
+					}),
 					tray: {
 						x: rect.x + 13,
 						y: front.y + 20,

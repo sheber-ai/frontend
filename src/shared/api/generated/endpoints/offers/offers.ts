@@ -26,9 +26,9 @@ import type {
 import type {
   HTTPValidationError,
   ListMyOffersParams,
+  MyOffersPageSchema,
   OfferCreateSchema,
-  OfferSchema,
-  PageSchemaMyOfferSchema
+  OfferSchema
 } from '../../model';
 
 import { httpClient } from '../../../http-client';
@@ -63,7 +63,7 @@ export const listMyOffers = (
 ) => {
 
 
-      return httpClient<PageSchemaMyOfferSchema>(
+      return httpClient<MyOffersPageSchema>(
       {url: `/api/v1/offers/mine`, method: 'GET',
         params, signal
     },

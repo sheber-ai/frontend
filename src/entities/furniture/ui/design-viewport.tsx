@@ -1,8 +1,20 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Box, DoorClosed, DoorOpen, Ruler } from '@/shared/design'
+import { Box, DoorClosed, DoorOpen, Rotate3d, Ruler, TriangleAlert } from '@/shared/design'
 import { formatNumber } from '@/shared/lib/format'
 import { cn } from '@/shared/lib/utils'
+import { Button } from '@/shared/ui/button'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/shared/ui/dropdown-menu'
+import { ErrorBoundary } from '@/shared/ui/error-boundary'
 import { Segmented } from '@/shared/ui/segmented'
+import { CAMERA_VIEWS, type CameraView } from '../model/camera'
 import type { DesignDocument } from '../model/document'
 import { DesignDrawing } from './design-drawing'
 import { DesignScene } from './design-scene-lazy'
@@ -66,17 +78,52 @@ export function DesignViewport({
 }: Props) {
 	const { t, i18n } = useTranslation()
 	const { width, height, depth } = doc.size
+	// Camera angle is view state only: never saved into the document
+	const [view, setView] = useState<{ name: CameraView; key: number }>({ name: 'iso', key: 0 })
+	const [failed, setFailed] = useState(false)
+	const showView = (name: CameraView) => setView((current) => ({ name, key: current.key + 1 }))
+
+	const renderFailure = (retry: () => void) => (
+		<div className="flex size-full flex-col items-center justify-center gap-3 p-6 text-center">
+			<TriangleAlert className="size-7 text-warning" />
+			<p className="max-w-xs text-body-sm text-muted-foreground">{t('editor.view.failed')}</p>
+			<div className="flex flex-wrap justify-center gap-2">
+				<Button size="sm" onClick={() => onModeChange('drawing')}>
+					<Ruler />
+					{t('editor.view.toDrawing')}
+				</Button>
+				<Button
+					size="sm"
+					variant="outline"
+					onClick={() => {
+						setFailed(false)
+						retry()
+					}}
+				>
+					{t('attachments.retry')}
+				</Button>
+			</div>
+		</div>
+	)
 
 	return (
 		<div className={cn('relative overflow-hidden bg-blueprint', className)}>
 			{mode === '3d' ? (
-				<DesignScene
-					document={doc}
-					selectedId={selectedId}
-					onSelect={onSelect}
-					open={open}
-					showDimensions={dimensions}
-				/>
+				failed ? (
+					renderFailure(() => undefined)
+				) : (
+					<ErrorBoundary fallback={renderFailure} onError={() => setFailed(true)}>
+						<DesignScene
+							document={doc}
+							selectedId={selectedId}
+							onSelect={onSelect}
+							open={open}
+							showDimensions={dimensions}
+							view={view}
+							onRenderError={() => setFailed(true)}
+						/>
+					</ErrorBoundary>
+				)
 			) : (
 				<div className="size-full p-4 pt-16 sm:p-8 sm:pt-16">
 					<DesignDrawing
@@ -100,6 +147,32 @@ export function DesignViewport({
 					]}
 				/>
 				<div className="pointer-events-auto flex gap-2">
+					{mode === '3d' && !failed && (
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<button
+									type="button"
+									aria-label={t('editor.view.angle')}
+									title={t('editor.view.angle')}
+									className="flex size-10 items-center justify-center rounded-lg border bg-card/90 text-muted-foreground shadow-sm backdrop-blur transition-colors outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:size-4"
+								>
+									<Rotate3d />
+								</button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end" className="w-48">
+								<DropdownMenuLabel>{t('editor.view.angle')}</DropdownMenuLabel>
+								{CAMERA_VIEWS.map((name) => (
+									<DropdownMenuItem key={name} onSelect={() => showView(name)}>
+										{t(`editor.view.angles.${name}`)}
+									</DropdownMenuItem>
+								))}
+								<DropdownMenuSeparator />
+								<DropdownMenuItem onSelect={() => showView('iso')}>
+									{t('editor.view.reset')}
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					)}
 					{mode === '3d' && (
 						<OverlayToggle
 							active={open}

@@ -51,9 +51,17 @@ export const CreateOrderResponse = zod.object({
   "id": zod.uuid(),
   "name": zod.string()
 }).describe('City inside other resources; `name` is in the request language.'),
+  "serviceCities": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+}).describe('City inside other resources; `name` is in the request language.')).describe('Other cities the workshop serves besides `city`'),
   "description": zod.string(),
   "website": zod.union([zod.string(),zod.null()]),
   "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])),
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "foundedYear": zod.union([zod.int(),zod.null()]),
   "createdAt": zod.iso.datetime({"offset":true})
 }),zod.null()]),
   "myOffer": zod.union([zod.object({
@@ -62,6 +70,10 @@ export const CreateOrderResponse = zod.object({
   "price": zod.int(),
   "days": zod.int(),
   "comment": zod.string(),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "includesDelivery": zod.boolean(),
+  "includesInstallation": zod.boolean(),
+  "prepaymentPercent": zod.union([zod.int(),zod.null()]),
   "status": zod.enum(['pending', 'accepted', 'rejected', 'withdrawn']),
   "createdAt": zod.iso.datetime({"offset":true}),
   "updatedAt": zod.iso.datetime({"offset":true})
@@ -86,7 +98,8 @@ export const listMyOrdersQueryLimitMax = 100;
 
 export const ListMyOrdersQueryParams = zod.object({
   "offset": zod.int().min(listMyOrdersQueryOffsetMin).default(listMyOrdersQueryOffsetDefault),
-  "limit": zod.int().min(1).max(listMyOrdersQueryLimitMax).default(listMyOrdersQueryLimitDefault)
+  "limit": zod.int().min(1).max(listMyOrdersQueryLimitMax).default(listMyOrdersQueryLimitDefault),
+  "group": zod.union([zod.enum(['active', 'completed', 'cancelled']).describe('Tab of the client\'s order list.'),zod.null()]).optional().describe('Only orders of this tab')
 })
 
 export const ListMyOrdersResponse = zod.object({
@@ -107,7 +120,12 @@ export const ListMyOrdersResponse = zod.object({
   "offersCount": zod.int(),
   "createdAt": zod.iso.datetime({"offset":true})
 })),
-  "total": zod.int()
+  "total": zod.int(),
+  "counts": zod.object({
+  "active": zod.int(),
+  "completed": zod.int(),
+  "cancelled": zod.int()
+}).describe('Orders in each tab, regardless of the filter')
 })
 
 /**
@@ -119,13 +137,16 @@ export const listOrderFeedQueryOffsetMin = 0;
 export const listOrderFeedQueryLimitDefault = 20;
 export const listOrderFeedQueryLimitMax = 100;
 
-
+export const listOrderFeedQueryWithoutMyOfferDefault = false;
+export const listOrderFeedQueryMyCitiesDefault = false;
 
 export const ListOrderFeedQueryParams = zod.object({
   "offset": zod.int().min(listOrderFeedQueryOffsetMin).default(listOrderFeedQueryOffsetDefault),
   "limit": zod.int().min(1).max(listOrderFeedQueryLimitMax).default(listOrderFeedQueryLimitDefault),
   "cityId": zod.union([zod.uuid(),zod.null()]).optional(),
-  "furnitureType": zod.union([zod.enum(['wardrobe', 'shelving', 'dresser']),zod.null()]).optional()
+  "furnitureType": zod.union([zod.enum(['wardrobe', 'shelving', 'dresser']),zod.null()]).optional(),
+  "withoutMyOffer": zod.boolean().default(listOrderFeedQueryWithoutMyOfferDefault).describe('Hide orders the workshop already responded to'),
+  "myCities": zod.boolean().default(listOrderFeedQueryMyCitiesDefault).describe('Only orders from the cities the workshop serves')
 })
 
 export const ListOrderFeedResponse = zod.object({
@@ -182,9 +203,17 @@ export const GetOrderResponse = zod.object({
   "id": zod.uuid(),
   "name": zod.string()
 }).describe('City inside other resources; `name` is in the request language.'),
+  "serviceCities": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+}).describe('City inside other resources; `name` is in the request language.')).describe('Other cities the workshop serves besides `city`'),
   "description": zod.string(),
   "website": zod.union([zod.string(),zod.null()]),
   "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])),
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "foundedYear": zod.union([zod.int(),zod.null()]),
   "createdAt": zod.iso.datetime({"offset":true})
 }),zod.null()]),
   "myOffer": zod.union([zod.object({
@@ -193,6 +222,10 @@ export const GetOrderResponse = zod.object({
   "price": zod.int(),
   "days": zod.int(),
   "comment": zod.string(),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "includesDelivery": zod.boolean(),
+  "includesInstallation": zod.boolean(),
+  "prepaymentPercent": zod.union([zod.int(),zod.null()]),
   "status": zod.enum(['pending', 'accepted', 'rejected', 'withdrawn']),
   "createdAt": zod.iso.datetime({"offset":true}),
   "updatedAt": zod.iso.datetime({"offset":true})
@@ -236,9 +269,17 @@ export const CancelOrderResponse = zod.object({
   "id": zod.uuid(),
   "name": zod.string()
 }).describe('City inside other resources; `name` is in the request language.'),
+  "serviceCities": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+}).describe('City inside other resources; `name` is in the request language.')).describe('Other cities the workshop serves besides `city`'),
   "description": zod.string(),
   "website": zod.union([zod.string(),zod.null()]),
   "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])),
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "foundedYear": zod.union([zod.int(),zod.null()]),
   "createdAt": zod.iso.datetime({"offset":true})
 }),zod.null()]),
   "myOffer": zod.union([zod.object({
@@ -247,6 +288,10 @@ export const CancelOrderResponse = zod.object({
   "price": zod.int(),
   "days": zod.int(),
   "comment": zod.string(),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "includesDelivery": zod.boolean(),
+  "includesInstallation": zod.boolean(),
+  "prepaymentPercent": zod.union([zod.int(),zod.null()]),
   "status": zod.enum(['pending', 'accepted', 'rejected', 'withdrawn']),
   "createdAt": zod.iso.datetime({"offset":true}),
   "updatedAt": zod.iso.datetime({"offset":true})
@@ -290,9 +335,17 @@ export const StartOrderResponse = zod.object({
   "id": zod.uuid(),
   "name": zod.string()
 }).describe('City inside other resources; `name` is in the request language.'),
+  "serviceCities": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+}).describe('City inside other resources; `name` is in the request language.')).describe('Other cities the workshop serves besides `city`'),
   "description": zod.string(),
   "website": zod.union([zod.string(),zod.null()]),
   "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])),
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "foundedYear": zod.union([zod.int(),zod.null()]),
   "createdAt": zod.iso.datetime({"offset":true})
 }),zod.null()]),
   "myOffer": zod.union([zod.object({
@@ -301,6 +354,10 @@ export const StartOrderResponse = zod.object({
   "price": zod.int(),
   "days": zod.int(),
   "comment": zod.string(),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "includesDelivery": zod.boolean(),
+  "includesInstallation": zod.boolean(),
+  "prepaymentPercent": zod.union([zod.int(),zod.null()]),
   "status": zod.enum(['pending', 'accepted', 'rejected', 'withdrawn']),
   "createdAt": zod.iso.datetime({"offset":true}),
   "updatedAt": zod.iso.datetime({"offset":true})
@@ -344,9 +401,17 @@ export const CompleteOrderResponse = zod.object({
   "id": zod.uuid(),
   "name": zod.string()
 }).describe('City inside other resources; `name` is in the request language.'),
+  "serviceCities": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+}).describe('City inside other resources; `name` is in the request language.')).describe('Other cities the workshop serves besides `city`'),
   "description": zod.string(),
   "website": zod.union([zod.string(),zod.null()]),
   "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])),
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "foundedYear": zod.union([zod.int(),zod.null()]),
   "createdAt": zod.iso.datetime({"offset":true})
 }),zod.null()]),
   "myOffer": zod.union([zod.object({
@@ -355,6 +420,10 @@ export const CompleteOrderResponse = zod.object({
   "price": zod.int(),
   "days": zod.int(),
   "comment": zod.string(),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "includesDelivery": zod.boolean(),
+  "includesInstallation": zod.boolean(),
+  "prepaymentPercent": zod.union([zod.int(),zod.null()]),
   "status": zod.enum(['pending', 'accepted', 'rejected', 'withdrawn']),
   "createdAt": zod.iso.datetime({"offset":true}),
   "updatedAt": zod.iso.datetime({"offset":true})
@@ -380,6 +449,10 @@ export const ListOrderOffersResponse = zod.object({
   "price": zod.int(),
   "days": zod.int(),
   "comment": zod.string(),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "includesDelivery": zod.boolean(),
+  "includesInstallation": zod.boolean(),
+  "prepaymentPercent": zod.union([zod.int(),zod.null()]),
   "status": zod.enum(['pending', 'accepted', 'rejected', 'withdrawn']),
   "createdAt": zod.iso.datetime({"offset":true}),
   "updatedAt": zod.iso.datetime({"offset":true}),
@@ -390,9 +463,17 @@ export const ListOrderOffersResponse = zod.object({
   "id": zod.uuid(),
   "name": zod.string()
 }).describe('City inside other resources; `name` is in the request language.'),
+  "serviceCities": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+}).describe('City inside other resources; `name` is in the request language.')).describe('Other cities the workshop serves besides `city`'),
   "description": zod.string(),
   "website": zod.union([zod.string(),zod.null()]),
   "furnitureTypes": zod.array(zod.enum(['wardrobe', 'shelving', 'dresser'])),
+  "services": zod.array(zod.enum(['measurement', 'design_project', 'delivery', 'installation', 'dismantling']).describe('What a workshop does besides manufacturing.')),
+  "materials": zod.array(zod.enum(['chipboard', 'mdf', 'veneer', 'solid_wood', 'plywood', 'glass']).describe('Board and finishing materials a workshop works with.')),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "foundedYear": zod.union([zod.int(),zod.null()]),
   "createdAt": zod.iso.datetime({"offset":true})
 })
 })),
@@ -414,12 +495,24 @@ export const createOfferBodyDaysMax = 365;
 export const createOfferBodyCommentDefault = ``;
 export const createOfferBodyCommentMax = 2000;
 
+export const createOfferBodyWarrantyMonthsOneMin = 0;
+export const createOfferBodyWarrantyMonthsOneMax = 120;
+
+export const createOfferBodyIncludesDeliveryDefault = false;
+export const createOfferBodyIncludesInstallationDefault = false;
+export const createOfferBodyPrepaymentPercentOneMin = 0;
+export const createOfferBodyPrepaymentPercentOneMax = 100;
+
 
 
 export const CreateOfferBody = zod.object({
   "price": zod.int().min(createOfferBodyPriceMin).max(createOfferBodyPriceMax).describe('KZT'),
   "days": zod.int().min(1).max(createOfferBodyDaysMax),
-  "comment": zod.string().max(createOfferBodyCommentMax).default(createOfferBodyCommentDefault)
+  "comment": zod.string().max(createOfferBodyCommentMax).default(createOfferBodyCommentDefault),
+  "warrantyMonths": zod.union([zod.int().min(createOfferBodyWarrantyMonthsOneMin).max(createOfferBodyWarrantyMonthsOneMax),zod.null()]).optional(),
+  "includesDelivery": zod.boolean().default(createOfferBodyIncludesDeliveryDefault),
+  "includesInstallation": zod.boolean().default(createOfferBodyIncludesInstallationDefault),
+  "prepaymentPercent": zod.union([zod.int().min(createOfferBodyPrepaymentPercentOneMin).max(createOfferBodyPrepaymentPercentOneMax),zod.null()]).optional()
 })
 
 export const CreateOfferResponse = zod.object({
@@ -428,6 +521,10 @@ export const CreateOfferResponse = zod.object({
   "price": zod.int(),
   "days": zod.int(),
   "comment": zod.string(),
+  "warrantyMonths": zod.union([zod.int(),zod.null()]),
+  "includesDelivery": zod.boolean(),
+  "includesInstallation": zod.boolean(),
+  "prepaymentPercent": zod.union([zod.int(),zod.null()]),
   "status": zod.enum(['pending', 'accepted', 'rejected', 'withdrawn']),
   "createdAt": zod.iso.datetime({"offset":true}),
   "updatedAt": zod.iso.datetime({"offset":true})

@@ -1,8 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from '@/app/entrypoint'
+import { i18nReady } from '@/app/i18n'
 import { initAuth } from '@/shared/auth'
-import '@/app/i18n'
 import '@/app/styles/index.css'
 
 const rootElement = document.getElementById('root')
@@ -16,7 +16,11 @@ function render() {
 	)
 }
 
-// Resolve the session before render; if Keycloak is down, continue as a guest.
-initAuth()
-	.catch((error: unknown) => console.error('Keycloak is unavailable', error))
-	.finally(render)
+// Resolve the session and the stored language before render; if Keycloak is down, continue as a guest.
+const session = initAuth().catch((error: unknown) =>
+	console.error('Keycloak is unavailable', error),
+)
+const language = i18nReady.catch((error: unknown) =>
+	console.error('Translations failed to load', error),
+)
+void Promise.all([session, language]).finally(render)

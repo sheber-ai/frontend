@@ -7,15 +7,30 @@ import {
 	isDesignDocument,
 	type ViewMode,
 } from '@/entities/furniture'
-import { OfferStatusBadge } from '@/entities/offer'
-import { OrderStatusBadge, OrderTimeline } from '@/entities/order'
+import {
+	OFFER_SORTS,
+	type OfferSort,
+	OfferStatusBadge,
+	OfferTerms,
+	offerHighlights,
+	sortOffers,
+} from '@/entities/offer'
+import { clientNextStep, OrderStatusBadge, OrderTimeline, workshopNextStep } from '@/entities/order'
+import { ReviewItem } from '@/entities/review'
 import { isWorkshop, useViewer } from '@/entities/viewer'
 import { WorkshopSummary } from '@/entities/workshop'
 import { AcceptOfferButton } from '@/features/accept-offer'
+import { AttachmentGallery } from '@/features/manage-attachments'
 import { OrderActions } from '@/features/manage-order'
+import { OrderChatButton } from '@/features/order-chat'
+import { ReplyReviewForm } from '@/features/reply-review'
+import { ReviewWorkshopPanel } from '@/features/review-workshop'
 import { OfferForm, WithdrawOfferButton } from '@/features/send-offer'
+import { useListAttachments } from '@/shared/api/generated/endpoints/attachments/attachments'
+import { useListOrderThreads } from '@/shared/api/generated/endpoints/messages/messages'
 import { useGetOrder, useListOrderOffers } from '@/shared/api/generated/endpoints/orders/orders'
-import type { OrderDetailSchema } from '@/shared/api/generated/model'
+import { useGetOrderReview } from '@/shared/api/generated/endpoints/reviews/reviews'
+import type { OrderDetailSchema, ThreadSchema } from '@/shared/api/generated/model'
 import {
 	ArrowLeft,
 	Calendar,
@@ -29,9 +44,12 @@ import {
 	TriangleAlert,
 	Wallet,
 } from '@/shared/design'
-import { formatDate, formatMoney, formatPhone } from '@/shared/lib/format'
+import { formatDate, formatMoney } from '@/shared/lib/format'
+import { formatPhone } from '@/shared/lib/phone'
+import { Badge } from '@/shared/ui/badge'
 import { Button } from '@/shared/ui/button'
 import { EmptyState } from '@/shared/ui/empty-state'
+import { Segmented } from '@/shared/ui/segmented'
 import { Skeleton } from '@/shared/ui/skeleton'
 
 function Panel({
@@ -54,9 +72,96 @@ function Panel({
 	)
 }
 
-function OwnerOffers({ order }: { order: OrderDetailSchema }) {
+const THREADS_POLL_MS = 30_000
+
+/** What the client wrote about the work, shown to the workshop that did it, with its public answer. */
+function ReceivedReview({ orderId }: { orderId: string }) {
+	const { t } = useTranslation()
+	const { data: review } = useGetOrderReview(orderId)
+	if (!review) return null
+	return (
+		<Panel title={t('reviews.title')}>
+			<div className="flex flex-col gap-3">
+				<ReviewItem review={review} />
+				<ReplyReviewForm review={review} />
+			</div>
+		</Panel>
+	)
+}
+
+const SORT_LABELS = {
+	price: 'offer.sortPrice',
+	days: 'offer.sortDays',
+	newest: 'offer.sortNewest',
+} as const satisfies Record<OfferSort, string>
+
+function useThreads(orderId: string, enabled: boolean) {
+	const { data } = useListOrderThreads(orderId, {
+		query: { enabled, refetchInterval: THREADS_POLL_MS },
+	})
+	return useMemo(
+		() => new Map((data?.items ?? []).map((thread) => [thread.workshop.id, thread])),
+		[data],
+	)
+}
+
+function ChatWithWorkshop({
+	orderId,
+	thread,
+}: {
+	orderId: string
+	thread: ThreadSchema | undefined
+}) {
+	const { t } = useTranslation()
+	if (!thread || (!thread.canWrite && !thread.lastMessage)) return null
+	return (
+		<OrderChatButton
+			orderId={orderId}
+			workshopId={thread.workshop.id}
+			title={t('chat.withWorkshop', { name: thread.workshop.name })}
+			unread={thread.unreadCount}
+		/>
+	)
+}
+
+function WorkshopQuestions({
+	order,
+	threads,
+}: {
+	order: OrderDetailSchema
+	threads: Map<string, ThreadSchema>
+}) {
+	const { t } = useTranslation()
+	const questions = [...threads.values()].filter((thread) => thread.offerStatus === null)
+	if (questions.length === 0) return null
+	return (
+		<Panel title={t('chat.questions')}>
+			<p className="-mt-2 text-body-sm text-muted-foreground">{t('chat.questionsHint')}</p>
+			<ul className="flex flex-col gap-3">
+				{questions.map((thread) => (
+					<li
+						key={thread.workshop.id}
+						className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between"
+					>
+						<WorkshopSummary workshop={thread.workshop} />
+						<ChatWithWorkshop orderId={order.id} thread={thread} />
+					</li>
+				))}
+			</ul>
+		</Panel>
+	)
+}
+
+function OwnerOffers({
+	order,
+	threads,
+}: {
+	order: OrderDetailSchema
+	threads: Map<string, ThreadSchema>
+}) {
 	const { t, i18n } = useTranslation()
 	const { data, isPending } = useListOrderOffers(order.id)
+	const [sort, setSort] = useState<OfferSort>('price')
 
 	if (isPending) return <Skeleton className="h-32" />
 	if (!data || data.items.length === 0) {
@@ -66,27 +171,51 @@ function OwnerOffers({ order }: { order: OrderDetailSchema }) {
 			</p>
 		)
 	}
+	const { cheapest, fastest } = offerHighlights(data.items)
+	const offers = sortOffers(data.items, sort)
 	return (
-		<ul className="flex flex-col gap-3">
-			{data.items.map((offer) => (
-				<li key={offer.id} className="flex flex-col gap-3 rounded-lg border p-4">
-					<div className="flex items-start justify-between gap-3">
-						<WorkshopSummary workshop={offer.workshop} />
-						<OfferStatusBadge status={offer.status} />
-					</div>
-					<div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-						<span className="text-h4 tabular-nums">{formatMoney(offer.price, i18n.language)}</span>
-						<span className="text-body-sm text-muted-foreground">
-							{t('offer.daysValue', { count: offer.days })}
-						</span>
-					</div>
-					{offer.comment && <p className="text-body-sm whitespace-pre-line">{offer.comment}</p>}
-					{order.status === 'published' && offer.status === 'pending' && (
-						<AcceptOfferButton offerId={offer.id} workshopName={offer.workshop.name} />
-					)}
-				</li>
-			))}
-		</ul>
+		<div className="flex flex-col gap-3">
+			{data.items.length > 1 && (
+				<Segmented
+					label={t('offer.sort')}
+					value={sort}
+					onChange={setSort}
+					options={OFFER_SORTS.map((value) => ({ value, label: t(SORT_LABELS[value]) }))}
+				/>
+			)}
+			<ul className="flex flex-col gap-3">
+				{offers.map((offer) => (
+					<li key={offer.id} className="flex flex-col gap-3 rounded-lg border p-4">
+						<div className="flex items-start justify-between gap-3">
+							<WorkshopSummary workshop={offer.workshop} />
+							<OfferStatusBadge status={offer.status} />
+						</div>
+						<div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+							<span className="text-h4 tabular-nums">
+								{formatMoney(offer.price, i18n.language)}
+							</span>
+							<span className="text-body-sm text-muted-foreground">
+								{t('offer.daysValue', { count: offer.days })}
+							</span>
+						</div>
+						{(cheapest.has(offer.id) || fastest.has(offer.id)) && (
+							<div className="flex flex-wrap gap-1.5">
+								{cheapest.has(offer.id) && <Badge variant="success">{t('offer.cheapest')}</Badge>}
+								{fastest.has(offer.id) && <Badge variant="info">{t('offer.fastest')}</Badge>}
+							</div>
+						)}
+						<OfferTerms offer={offer} />
+						{offer.comment && <p className="text-body-sm whitespace-pre-line">{offer.comment}</p>}
+						<div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+							{order.status === 'published' && offer.status === 'pending' && (
+								<AcceptOfferButton offerId={offer.id} workshopName={offer.workshop.name} />
+							)}
+							<ChatWithWorkshop orderId={order.id} thread={threads.get(offer.workshop.id)} />
+						</div>
+					</li>
+				))}
+			</ul>
+		</div>
 	)
 }
 
@@ -117,6 +246,7 @@ function WorkshopOffer({ order }: { order: OrderDetailSchema }) {
 					{t('offer.daysValue', { count: offer.days })}
 				</span>
 			</div>
+			<OfferTerms offer={offer} />
 			{offer.comment && <p className="text-body-sm whitespace-pre-line">{offer.comment}</p>}
 			{offer.status === 'pending' && order.status === 'published' && (
 				<div className="flex flex-wrap gap-2">
@@ -131,6 +261,89 @@ function WorkshopOffer({ order }: { order: OrderDetailSchema }) {
 	)
 }
 
+function NextStepHint({
+	order,
+	workshopView,
+	isAssignedWorkshop,
+}: {
+	order: OrderDetailSchema
+	workshopView: boolean
+	isAssignedWorkshop: boolean
+}) {
+	const { t } = useTranslation()
+	let text: string | null = null
+	if (order.isOwner) {
+		const step = clientNextStep(order)
+		if (step) text = t(`orderNextStep.${step}`, { count: order.offersCount })
+	} else if (workshopView) {
+		const live = order.myOffer?.status === 'pending' || order.myOffer?.status === 'accepted'
+		const step = workshopNextStep(order.status, isAssignedWorkshop, live)
+		if (step) text = t(`workshopNextStep.${step}`)
+	}
+	if (!text) return null
+	return (
+		<div className="flex flex-col gap-1 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3">
+			<p className="text-caption tracking-wider text-primary uppercase">
+				{t('orderPage.yourStep')}
+			</p>
+			<p className="text-body-sm">{text}</p>
+		</div>
+	)
+}
+
+const ORDER_FILE_PURPOSES = ['reference', 'room', 'document'] as const
+
+function OrderFiles({ order }: { order: OrderDetailSchema }) {
+	const { t } = useTranslation()
+	const { data } = useListAttachments({ orderId: order.id })
+	const editable = order.isOwner && order.status !== 'completed' && order.status !== 'cancelled'
+	const empty = data !== undefined && data.items.length === 0
+	return (
+		<Panel title={t('orderPage.files')}>
+			{editable ? (
+				<p className="-mt-2 text-body-sm text-muted-foreground">{t('orderPage.filesHintOwner')}</p>
+			) : (
+				empty && (
+					<p className="-mt-2 text-body-sm text-muted-foreground">{t('orderPage.filesEmpty')}</p>
+				)
+			)}
+			{ORDER_FILE_PURPOSES.map((purpose) => (
+				<AttachmentGallery
+					key={purpose}
+					purpose={purpose}
+					target={{ orderId: order.id }}
+					editable={editable}
+				/>
+			))}
+		</Panel>
+	)
+}
+
+function ClientChat({
+	order,
+	threads,
+}: {
+	order: OrderDetailSchema
+	threads: Map<string, ThreadSchema>
+}) {
+	const { t } = useTranslation()
+	const thread = [...threads.values()][0]
+	if (!thread || (!thread.canWrite && !thread.lastMessage)) return null
+	const started = Boolean(thread.lastMessage)
+	return (
+		<Panel title={t('chat.withClient')}>
+			{!started && <p className="-mt-2 text-body-sm text-muted-foreground">{t('chat.askHint')}</p>}
+			<OrderChatButton
+				orderId={order.id}
+				title={t('chat.withClient')}
+				description={order.title}
+				unread={thread.unreadCount}
+				label={started ? t('chat.title') : t('chat.askClient')}
+			/>
+		</Panel>
+	)
+}
+
 export function OrderDetailsPage({ orderId }: { orderId: string }) {
 	const { t, i18n } = useTranslation()
 	const { viewer } = useViewer()
@@ -142,6 +355,8 @@ export function OrderDetailsPage({ orderId }: { orderId: string }) {
 		() => (order && isDesignDocument(order.document) ? order.document : null),
 		[order],
 	)
+	const workshopView = Boolean(order && !order.isOwner && isWorkshop(viewer))
+	const threads = useThreads(orderId, Boolean(order && (order.isOwner || workshopView)))
 
 	if (isPending) {
 		return (
@@ -164,7 +379,6 @@ export function OrderDetailsPage({ orderId }: { orderId: string }) {
 		)
 	}
 
-	const workshopView = !order.isOwner && isWorkshop(viewer)
 	const isAssignedWorkshop = workshopView && order.myOffer?.status === 'accepted'
 	const back = order.isOwner ? '/orders' : '/market'
 
@@ -218,7 +432,7 @@ export function OrderDetailsPage({ orderId }: { orderId: string }) {
 								onOpenChange={setOpen}
 								dimensions={dimensions}
 								onDimensionsChange={setDimensions}
-								className="h-[60svh] min-h-80 lg:h-[68svh]"
+								className="h-[50svh] min-h-72 lg:h-[68svh]"
 							/>
 						) : (
 							<div className="flex h-80 items-center justify-center text-muted-foreground">
@@ -246,6 +460,7 @@ export function OrderDetailsPage({ orderId }: { orderId: string }) {
 							</a>
 						</Panel>
 					)}
+					<OrderFiles order={order} />
 					{document && (
 						<Panel title={t('specs.title')}>
 							<DesignSpecsList document={document} />
@@ -253,8 +468,13 @@ export function OrderDetailsPage({ orderId }: { orderId: string }) {
 					)}
 				</div>
 
-				<aside className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-20 lg:self-start">
+				<aside className="flex min-w-0 flex-col gap-6 max-lg:order-first">
 					<Panel title={t('orderPage.progress')}>
+						<NextStepHint
+							order={order}
+							workshopView={workshopView}
+							isAssignedWorkshop={isAssignedWorkshop}
+						/>
 						<OrderTimeline status={order.status} />
 						<OrderActions order={order} isAssignedWorkshop={isAssignedWorkshop} />
 					</Panel>
@@ -287,6 +507,16 @@ export function OrderDetailsPage({ orderId }: { orderId: string }) {
 						</Panel>
 					)}
 
+					{order.isOwner && order.workshop && order.status === 'completed' && (
+						<Panel title={t('reviews.title')}>
+							<ReviewWorkshopPanel orderId={order.id} workshopName={order.workshop.name} />
+						</Panel>
+					)}
+
+					{isAssignedWorkshop && order.status === 'completed' && (
+						<ReceivedReview orderId={order.id} />
+					)}
+
 					{order.isOwner && order.workshop && (
 						<Panel title={t('orderPage.workshop')}>
 							<WorkshopSummary workshop={order.workshop} />
@@ -302,9 +532,11 @@ export function OrderDetailsPage({ orderId }: { orderId: string }) {
 								</span>
 							}
 						>
-							<OwnerOffers order={order} />
+							<OwnerOffers order={order} threads={threads} />
 						</Panel>
 					)}
+
+					{order.isOwner && <WorkshopQuestions order={order} threads={threads} />}
 
 					{workshopView && (
 						<Panel
@@ -317,6 +549,8 @@ export function OrderDetailsPage({ orderId }: { orderId: string }) {
 							<WorkshopOffer order={order} />
 						</Panel>
 					)}
+
+					{workshopView && <ClientChat order={order} threads={threads} />}
 				</aside>
 			</div>
 		</main>

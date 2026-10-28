@@ -11,6 +11,7 @@ import { navItems } from '../model/nav'
 import { AccountMenu } from './account-menu'
 import { LanguageSwitcher } from './language-switcher'
 import { MobileMenu } from './mobile-menu'
+import { NotificationsMenu } from './notifications-menu'
 
 export function AppHeader() {
 	const { t } = useTranslation()
@@ -61,6 +62,7 @@ export function AppHeader() {
 					<LanguageSwitcher />
 					{isAuthenticated ? (
 						<>
+							<NotificationsMenu />
 							<AccountMenu
 								name={viewer ? getViewerName(viewer) : t('header.profile')}
 								className="max-lg:hidden"

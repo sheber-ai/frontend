@@ -4,6 +4,7 @@
  * Sheber API
  * OpenAPI spec version: 0.1.0
  */
+import type { DesignOrderBriefSchema } from './designOrderBriefSchema';
 import type { DesignSchemaDocument } from './designSchemaDocument';
 import type { DesignSourceEnum } from './designSourceEnum';
 import type { FurnitureTypeEnum } from './furnitureTypeEnum';
@@ -17,4 +18,6 @@ export interface DesignSchema {
   document: DesignSchemaDocument;
   createdAt: string;
   updatedAt: string;
+  /** Unfinished order published from this design */
+  activeOrder?: DesignOrderBriefSchema | null;
 }

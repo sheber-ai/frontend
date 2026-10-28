@@ -16,6 +16,10 @@ const KNOWN = [
 	'conflict',
 	'service_unavailable',
 	'city_not_found',
+	'already_published',
+	'thread_required',
+	'review_not_allowed',
+	'import_rate_limited',
 ] as const
 
 type Known = (typeof KNOWN)[number]

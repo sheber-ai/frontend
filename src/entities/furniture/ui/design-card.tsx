@@ -6,9 +6,14 @@ import { Link as LinkIcon } from '@/shared/design'
 import { formatDate } from '@/shared/lib/format'
 import { DesignThumbnail } from './design-thumbnail'
 
-type Props = { design: DesignSchema; actions?: React.ReactNode }
+type Props = {
+	design: DesignSchema
+	actions?: React.ReactNode
+	/** Shown over the preview, e.g. the status of the order published from it */
+	badge?: React.ReactNode
+}
 
-export function DesignCard({ design, actions }: Props) {
+export function DesignCard({ design, actions, badge }: Props) {
 	const { t, i18n } = useTranslation()
 	return (
 		<article className="group relative flex min-w-0 flex-col overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-lg hover:shadow-foreground/5">
@@ -22,6 +27,7 @@ export function DesignCard({ design, actions }: Props) {
 						document={design.document}
 						className="absolute inset-0 p-6 transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none"
 					/>
+					{badge && <div className="absolute top-3 left-3">{badge}</div>}
 				</div>
 				<div className="flex flex-col gap-1 border-t p-4 pr-24">
 					<span className="truncate text-h4 group-hover:text-primary">{design.title}</span>

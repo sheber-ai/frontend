@@ -21,7 +21,23 @@
 		"roles": "Roles",
 		"saved": "Profile saved",
 		"workshop": "Workshop",
-		"workshopApply": "Take orders as a workshop"
+		"workshopApply": "Take orders as a workshop",
+		"attention": "Needs your attention",
+		"allClear": "Nothing needs your action right now — we will notify you about offers and messages.",
+		"orders": "My orders",
+		"recent": "Recent orders",
+		"allOrders": "All orders",
+		"noOrdersTitle": "No orders yet",
+		"noOrdersText": "Design your furniture in the constructor and publish an order — workshops in your city will send prices and timelines.",
+		"newProject": "New project",
+		"drafts_one": "{{count}} project in the constructor",
+		"drafts_other": "{{count}} projects in the constructor",
+		"toProjects": "Projects",
+		"personal": "Personal details",
+		"personalText": "Only the workshop you choose for an order sees your phone and last name.",
+		"workshopManage": "Manage workshop",
+		"offers_one": "{{count}} offer",
+		"offers_other": "{{count}} offers"
 	},
 	"language": {
 		"label": "Language"
@@ -175,7 +191,18 @@
 		"save": "Save",
 		"cancel": "Cancel",
 		"delete": "Delete",
-		"back": "Back"
+		"back": "Back",
+		"unsaved": "You have unsaved changes",
+		"leaveTitle": "Leave without saving?",
+		"leaveText": "Your changes will be lost. Save the form to keep them.",
+		"stay": "Stay",
+		"leave": "Leave without saving",
+		"pagination": {
+			"label": "Pages",
+			"previous": "Previous",
+			"next": "Next",
+			"position": "Page {{page}} of {{count}}"
+		}
 	},
 	"units": {
 		"mm": "mm"
@@ -194,7 +221,10 @@
 		"placeholder": "Choose a city",
 		"all": "All cities",
 		"search": "Find a city",
-		"notFound": "This city is not on the list"
+		"notFound": "This city is not on the list",
+		"add": "Add a city",
+		"remove": "Remove {{name}}",
+		"mine": "My cities"
 	},
 	"furnitureTypes": {
 		"wardrobe": "Wardrobe",
@@ -239,19 +269,26 @@
 		"invalid_status": "The order status has changed. Refresh the page.",
 		"conflict": "The data has changed. Refresh the page.",
 		"service_unavailable": "The service is temporarily unavailable. Try again in a minute.",
-		"city_not_found": "This city is not on the list. Choose another one."
+		"city_not_found": "This city is not on the list. Choose another one.",
+		"thread_required": "Choose the workshop you want to write to.",
+		"already_published": "This project already has an open order — find it in “My orders”.",
+		"review_not_allowed": "You can review only your own completed order",
+		"import_rate_limited": "Too many shop requests. You can add photos later in the Photos tab."
 	},
 	"form": {
 		"required": "Fill in this field",
 		"invalid": "Check the value",
-		"phone": "Use the format +7 701 123 45 67",
+		"phone": "Enter the full number: +7 701 123 45 67 or with your country code",
 		"digits": "Digits only",
 		"taxId": "BIN or IIN: 12 digits",
 		"url": "The link must start with https://",
 		"tooLong": "The text is too long",
 		"minPrice": "The price starts at 1,000 ₸",
 		"pastDate": "This date has passed",
-		"pickOne": "Choose at least one option"
+		"pickOne": "Choose at least one option",
+		"year": "Enter a year from 1950 to now",
+		"number": "Enter a whole number from 0 to 120",
+		"percent": "A whole number from 0 to 100"
 	},
 	"welcome": {
 		"title": "Welcome to Sheber",
@@ -275,7 +312,7 @@
 		"firstName": "First name",
 		"lastName": "Last name",
 		"phone": "Phone",
-		"phoneHint": "A Kazakhstan number the workshop will call",
+		"phoneHint": "The workshop you choose will call this number. For another country, start with “+” and the code",
 		"city": "City"
 	},
 	"projects": {
@@ -325,14 +362,38 @@
 		"templatesTitle": "Templates",
 		"templatesText": "A template is a starting point. You can rebuild it completely in the constructor.",
 		"importTitle": "From a sample",
-		"importText": "Found furniture in another shop? Soon you will be able to load it straight into the constructor.",
+		"importText": "Found furniture in another shop? We read the link and turn it into a project with a reference.",
 		"link": {
 			"title": "From a shop link",
-			"text": "Soon AI will read the link and build the model itself. For now, pick the type: a similar template opens, and the link is saved with the project so the workshop sees the sample.",
+			"text": "Paste a product link — we read the name, photos and sizes if the shop publishes them. You build the model in the constructor; the photos become a reference for the workshop.",
 			"url": "Product link",
 			"type": "What kind of furniture",
 			"submit": "Create project",
-			"soon": "AI coming soon"
+			"read": "Read the link",
+			"reading": "Reading the page…",
+			"previewEyebrow": "Found on the page",
+			"name": "Project name",
+			"sizeFromShop": "Sizes from the shop, mm",
+			"sizeFromTemplate": "Sizes, mm (the shop gave none — taken from the template)",
+			"sizeHint": "Check and adjust — everything can change in the constructor.",
+			"sizeClamped": "Some sizes are beyond what the constructor builds — they were set to the nearest allowed values.",
+			"photos": "Photos for the reference",
+			"photoToggle": "Use the photo as a reference",
+			"shopPrice": "Shop price: {{price}}. For reference only — workshops quote the making.",
+			"honest": "We do not turn photos into a ready model: a similar template opens with these sizes, and the photos and link stay in the project as a reference.",
+			"imagesFailed_one": "{{count}} photo could not be copied — the shop did not give it",
+			"imagesFailed_other": "{{count}} photos could not be copied — the shop did not give them",
+			"errors": {
+				"import_bad_url": "Use a link like https://shop.kz/item",
+				"import_blocked": "This link points to an internal network — such addresses are not opened",
+				"import_not_allowed": "The site does not allow automated reading of this page. Start from a template and attach screenshots in the Photos tab",
+				"import_unavailable": "The site did not answer. Check the link or try later",
+				"import_unsupported": "The link is not a product page",
+				"import_too_large": "The page is too large to read",
+				"import_no_data": "The shop publishes no readable product data. Start from a template and attach screenshots in the Photos tab",
+				"validation": "Check the link",
+				"import_rate_limited": "Too many links in a short time. Wait a few minutes and try again — or start from a template."
+			}
 		},
 		"photo": {
 			"title": "From a photo",
@@ -356,7 +417,8 @@
 		"tabs": {
 			"section": "Section",
 			"body": "Body",
-			"check": "Check"
+			"check": "Check",
+			"files": "Photos"
 		},
 		"save": {
 			"saved": "Saved",
@@ -372,7 +434,18 @@
 			"close": "Close fronts",
 			"dimensions": "Dimensions",
 			"hint3d": "Tap a section to edit it. Rotate the model with a finger or the mouse",
-			"hintDrawing": "Tap a section to edit it"
+			"hintDrawing": "Tap a section to edit it",
+			"loading": "Loading the 3D model…",
+			"failed": "3D did not start on this device: the graphics card or browser lacks WebGL. Sizes and sections are available on the drawing.",
+			"toDrawing": "Open drawing",
+			"angle": "Camera angle",
+			"reset": "Default angle",
+			"angles": {
+				"iso": "Perspective",
+				"front": "Front",
+				"side": "Side",
+				"top": "Top"
+			}
 		},
 		"body": {
 			"size": "Overall size",
@@ -444,6 +517,17 @@
 			"title": "Design check",
 			"ok": "All good: no errors or warnings.",
 			"hint": "Errors block publishing. Warnings can stay; the workshop takes them into account."
+		},
+		"openOrder": "Open order",
+		"filesHint": "Workshops see photos and documents next to the model once you publish. They get a snapshot of the files at publishing time.",
+		"handles": {
+			"label": "Handles",
+			"bar": "Bar",
+			"knob": "Knob",
+			"none": "No handles",
+			"barHint": "A classic bar handle on doors and drawers.",
+			"knobHint": "A small knob in the middle of drawers and at the door edge.",
+			"noneHint": "Fronts open on press (push-to-open) — the workshop fits push latches."
 		}
 	},
 	"issues": {
@@ -479,7 +563,8 @@
 		"rods": "Rails",
 		"drawers": "Drawers",
 		"doors": "Doors",
-		"none": "None"
+		"none": "None",
+		"handles": "Handles"
 	},
 	"publish": {
 		"title": "Publish the order",
@@ -495,7 +580,17 @@
 		"success": "The order is published. Workshops can see it now",
 		"blockedTitle": "The project has errors",
 		"blockedText": "Fix the errors on the Check tab: a workshop cannot make the furniture with them.",
-		"showIssues": "Show errors"
+		"showIssues": "Show errors",
+		"reviewTitle": "Review your order",
+		"reviewText": "This is what workshops will see: the model, specs and your files. Change them in the constructor.",
+		"files": "Photos and documents",
+		"editFiles": "Edit",
+		"noRoomPhotos": "A photo of the room helps the workshop quote more precisely — add one if you have it.",
+		"warnings_one": "There is {{count}} remark on the design — the workshop will take it into account.",
+		"warnings_other": "There are {{count}} remarks on the design — the workshop will take them into account.",
+		"next": "Next",
+		"budgetHint": "Optional. Your guide, not a price: workshops name price and timing in their offers.",
+		"toProfile": "Open profile"
 	},
 	"order": {
 		"city": "City",
@@ -512,7 +607,13 @@
 		"description": "Published projects and the offers workshops sent for them.",
 		"emptyTitle": "No orders yet",
 		"emptyText": "Design a project in the constructor and publish it. Workshops will send prices and time frames.",
-		"toProjects": "To projects"
+		"toProjects": "To projects",
+		"tabs": "Order status",
+		"active": "Active",
+		"completed": "Completed",
+		"cancelled": "Cancelled",
+		"emptyTab": "Nothing here yet.",
+		"newProject": "New project"
 	},
 	"orderTimeline": {
 		"published": {
@@ -563,7 +664,11 @@
 		"clientContact": "Client contacts",
 		"myOffer": "Your offer",
 		"sendOffer": "Send an offer",
-		"closed": "The order no longer accepts offers."
+		"closed": "The order no longer accepts offers.",
+		"yourStep": "Your next step",
+		"files": "Client's photos and documents",
+		"filesHintOwner": "Add room photos, references and measurements — workshops can quote more precisely.",
+		"filesEmpty": "The client attached no photos or documents."
 	},
 	"offer": {
 		"price": "Price",
@@ -571,7 +676,7 @@
 		"daysValue_one": "{{count}} day",
 		"daysValue_other": "{{count}} days",
 		"comment": "Comment",
-		"commentHint": "Materials, hardware and what the price includes: delivery, assembly.",
+		"commentHint": "Materials, hardware, how you will make it.",
 		"send": "Send offer",
 		"save": "Save changes",
 		"sent": "The offer was sent to the client",
@@ -583,7 +688,19 @@
 		"accept": "Choose this workshop",
 		"acceptTitle": "Choose \"{{name}}\"?",
 		"acceptText": "Other offers close, and you and the workshop see each other's contacts.",
-		"accepted": "Workshop chosen, contacts are open"
+		"accepted": "Workshop chosen, contacts are open",
+		"terms": "What the price includes",
+		"warranty": "Warranty, months",
+		"prepayment": "Prepayment, %",
+		"prepaymentHint": "0 — pay after completion",
+		"includesDelivery": "Delivery is included in the price",
+		"includesInstallation": "Assembly and installation are included in the price",
+		"sort": "Sort",
+		"sortPrice": "Cheapest",
+		"sortDays": "Fastest",
+		"sortNewest": "Newest",
+		"cheapest": "Best price",
+		"fastest": "Fastest"
 	},
 	"market": {
 		"title": "Order feed",
@@ -594,14 +711,34 @@
 		"emptyText": "Try another city or furniture type. New orders appear here as soon as they are published.",
 		"lockedTitle": "The feed is for workshops",
 		"lockedText": "Fill in the workshop application. Client orders appear here once it is verified.",
-		"toWorkshop": "Fill in the application"
+		"toWorkshop": "Fill in the application",
+		"allCities": "All cities",
+		"withoutMine": "Without my offer",
+		"found_one": "{{count}} order found",
+		"found_other": "{{count}} orders found",
+		"myCity": "Your city",
+		"more": "Show more",
+		"shown": "Showing {{shown}} of {{total}}",
+		"myCitiesHint": "Your cities: {{cities}}. Change the list in the workshop form."
 	},
 	"myOffers": {
 		"title": "My offers",
 		"description": "Your workshop's offers and what clients decided.",
 		"emptyTitle": "No offers yet",
 		"emptyText": "Find a suitable order in the feed and offer a price and a time frame.",
-		"toMarket": "Open the feed"
+		"toMarket": "Open the feed",
+		"tabs": "Offers",
+		"active": "Active",
+		"archive": "Archive",
+		"emptyActive": "No active offers. New orders are in the feed.",
+		"emptyArchive": "Rejected, withdrawn and finished offers will appear here.",
+		"hint": {
+			"pending": "Waiting for the client — you can edit or withdraw it",
+			"chosen": "The client chose you — get in touch and agree on the start",
+			"inProgress": "In progress — the client will confirm completion",
+			"done": "Order completed",
+			"closed": "Offer closed"
+		}
 	},
 	"workshop": {
 		"eyebrow": "Workshop",
@@ -633,19 +770,51 @@
 			"website": "Website or Instagram",
 			"websiteHint": "Optional, but a portfolio helps you win orders",
 			"types": "What you make",
-			"description": "About the workshop",
-			"descriptionHint": "Experience, materials, equipment, delivery and assembly.",
+			"description": "Description",
+			"descriptionHint": "Experience, equipment, what sets you apart — 80+ characters",
 			"submit": "Send for review",
 			"save": "Save",
 			"sent": "The application was sent for review",
-			"saved": "Workshop details saved"
+			"saved": "Workshop details saved",
+			"phoneHint": "Clients see the number only after they choose your workshop",
+			"sectionMain": "About the workshop",
+			"sectionMainText": "Clients see this on the workshop's public page.",
+			"sectionWork": "Production and services",
+			"sectionWorkText": "Clients compare workshops by this data.",
+			"sectionPrivate": "Contacts and legal details",
+			"sectionPrivateText": "The phone and tax ID are not public: a client sees the phone after choosing your workshop.",
+			"services": "Services",
+			"materials": "Materials",
+			"warranty": "Warranty, months",
+			"warrantyHint": "Leave empty if you give no warranty",
+			"foundedYear": "Founded in",
+			"foundedYearHint": "The year the workshop started",
+			"serviceCities": "We also work in",
+			"serviceCitiesHint": "Optional. Orders from these cities appear in your feed; clients see them on the workshop page."
 		},
 		"whyTitle": "Why we verify",
 		"why": {
 			"one": "Clients share their projects and contacts only with real workshops.",
 			"two": "A verified workshop sees every order in its city.",
 			"three": "No spam: every offer comes from a verified maker."
-		}
+		},
+		"completeness": "Profile completeness",
+		"completenessText": "Clients choose detailed profiles more often. Still to add:",
+		"completenessDone": "The profile is complete — clients see everything they need to choose.",
+		"checks": {
+			"description": "Describe the workshop in more detail — 80+ characters",
+			"services": "Mark your services: measuring, delivery, assembly",
+			"materials": "List the materials you work with",
+			"warranty": "State your warranty",
+			"foundedYear": "State the founding year",
+			"website": "Add a website or Instagram with your work"
+		},
+		"viewPublic": "Public page",
+		"myOffers": "My offers",
+		"shortcuts": "Working with orders",
+		"publicHint": "This is how clients see your workshop — in offers and on its page.",
+		"mediaTitle": "Logo and portfolio",
+		"mediaText": "Photos of finished work are the strongest argument for clients. They appear on the public page after moderation."
 	},
 	"moderation": {
 		"title": "Workshop moderation",
@@ -663,5 +832,208 @@
 		"rejected": "\"{{name}}\" is rejected",
 		"emptyTitle": "Nothing here",
 		"emptyText": "There are no applications with this status."
+	},
+	"chat": {
+		"title": "Messages",
+		"withWorkshop": "Conversation with “{{name}}”",
+		"withClient": "Conversation with the client",
+		"open": "Message",
+		"unread_one": "{{count}} new",
+		"unread_other": "{{count}} new",
+		"placeholder": "Message…",
+		"send": "Send",
+		"hint": "Enter to send, Shift+Enter for a new line",
+		"empty": "No messages yet. Ask a question — the reply will appear here and in notifications.",
+		"closed": "The conversation is closed: the order was cancelled or given to another workshop.",
+		"loadError": "Could not load the conversation.",
+		"you": "You",
+		"client": "Client",
+		"questions": "Questions from workshops",
+		"questionsHint": "Workshops that wrote to you but have not sent an offer yet.",
+		"askClient": "Ask the client",
+		"askHint": "Clarify sizes, materials or timing before you offer — the client will reply here.",
+		"read": "Read",
+		"delivered": "Delivered"
+	},
+	"notifications": {
+		"title": "Notifications",
+		"empty": "Nothing new yet",
+		"readAll": "Mark all as read",
+		"kinds": {
+			"new_order": "New order in your city: “{{subject}}”",
+			"offer_received": "“{{actor}}” sent an offer for “{{subject}}”",
+			"offer_accepted": "The client chose you for “{{subject}}”",
+			"offer_rejected": "The client chose another workshop for “{{subject}}”",
+			"message_received": "New message from {{actor}} — “{{subject}}”",
+			"order_started": "“{{actor}}” started work on “{{subject}}”",
+			"order_completed": "The client marked “{{subject}}” as completed",
+			"order_cancelled": "The client cancelled “{{subject}}”",
+			"workshop_approved": "“{{subject}}” passed moderation — the order feed is open",
+			"workshop_rejected": "The application for “{{subject}}” was sent back for changes",
+			"review_received": "{{actor}} left a review on “{{subject}}”",
+			"review_replied": "{{actor}} replied to your review of “{{subject}}”"
+		}
+	},
+	"time": {
+		"justNow": "just now"
+	},
+	"workshopServices": {
+		"measurement": "On-site measuring",
+		"design_project": "Design project",
+		"delivery": "Delivery",
+		"installation": "Assembly and installation",
+		"dismantling": "Removal of old furniture"
+	},
+	"workshopMaterials": {
+		"chipboard": "Laminated chipboard",
+		"mdf": "MDF",
+		"veneer": "Veneer",
+		"solid_wood": "Solid wood",
+		"plywood": "Plywood",
+		"glass": "Glass and mirrors"
+	},
+	"workshopProfile": {
+		"back": "Back",
+		"verified": "Verified by Sheber",
+		"verifiedOn": "Verified {{date}}",
+		"about": "About",
+		"noAbout": "The workshop has not described itself yet.",
+		"makes": "Makes",
+		"services": "Services",
+		"materials": "Materials",
+		"noData": "Not specified",
+		"facts": "At a glance",
+		"founded": "Working since {{year}}",
+		"warranty_one": "{{count}}-month warranty",
+		"warranty_other": "{{count}}-month warranty",
+		"noWarranty": "Warranty not specified",
+		"completed_one": "{{count}} order completed via Sheber",
+		"completed_other": "{{count}} orders completed via Sheber",
+		"completedNone": "No orders completed via Sheber yet",
+		"portfolio": "Portfolio",
+		"portfolioEmpty": "See examples on the workshop's website if it is listed.",
+		"website": "Website and social media",
+		"contactTitle": "How to get in touch",
+		"contactText": "The workshop's phone opens once you choose it for your order. Until then, ask questions in the order conversation.",
+		"createOrder": "Create an order",
+		"myOrders": "My orders",
+		"notFound": "Workshop unavailable",
+		"notFoundText": "It has not passed moderation yet or the profile is hidden.",
+		"dataNote": "Order figures count only deals made through Sheber.",
+		"portfolioEmptyTitle": "No photos of work yet",
+		"portfolioCount_one": "{{count}} project",
+		"portfolioCount_other": "{{count}} projects",
+		"alsoServes": "Also: {{cities}}"
+	},
+	"orderNextStep": {
+		"chooseWorkshop_one": "{{count}} offer — compare and choose a workshop",
+		"chooseWorkshop_other": "{{count}} offers — compare and choose a workshop",
+		"waitOffers": "Waiting for workshop offers",
+		"agreeStart": "Workshop chosen — agree on measuring and the start date",
+		"confirmDone": "In progress — confirm completion once the furniture is installed"
+	},
+	"offerTerms": {
+		"delivery": "Delivery included",
+		"installation": "Assembly and installation included",
+		"warranty_one": "{{count}}-month warranty",
+		"warranty_other": "{{count}}-month warranty",
+		"noWarranty": "No warranty stated",
+		"prepayment": "{{percent}}% prepayment",
+		"noPrepayment": "No prepayment",
+		"prepaymentUnknown": "Prepayment not stated"
+	},
+	"workshopNextStep": {
+		"agreeAndStart": "You were chosen. Contact the client, agree on measuring and press “Start work”.",
+		"finishWork": "Once the furniture is installed, ask the client to confirm completion in the order.",
+		"waitChoice": "Offer sent — the client is comparing offers. Replies will come to notifications.",
+		"notChosen": "The client chose another workshop or cancelled the order."
+	},
+	"attachments": {
+		"add": "Add files",
+		"addPhotos": "Add photos",
+		"replace": "Replace",
+		"remove": "Delete",
+		"removeTitle": "Delete the file?",
+		"removeText": "The file disappears everywhere it is attached in this project.",
+		"cover": "Cover",
+		"makeCover": "Make cover",
+		"moveLeft": "Move left",
+		"moveRight": "Move right",
+		"retry": "Retry",
+		"uploading": "Uploading…",
+		"uploaded": "File uploaded",
+		"open": "Open",
+		"download": "Download",
+		"caption": "Caption",
+		"captionPlaceholder": "What is in the photo: item, materials, timeline",
+		"captionSave": "Save caption",
+		"empty": "No files yet",
+		"limits": "Up to {{count}} files, {{size}} each. {{types}}",
+		"limitsOne": "One file up to {{size}}. {{types}}",
+		"typesImages": "JPG, PNG or WebP",
+		"typesWithPdf": "JPG, PNG, WebP or PDF",
+		"loadError": "Could not load the files",
+		"errors": {
+			"file_too_large": "The file is too large",
+			"file_type_not_allowed": "This format is not supported",
+			"too_many_files": "File limit reached",
+			"network": "No connection — retry the upload",
+			"permission_denied": "You cannot upload here",
+			"invalid_status": "The order is closed — files can no longer change",
+			"unknown": "Upload failed"
+		},
+		"purposes": {
+			"workshop_logo": {
+				"title": "Logo",
+				"hint": "A square image — clients see it on the workshop page."
+			},
+			"workshop_portfolio": {
+				"title": "Portfolio",
+				"hint": "Photos of finished work with captions. The first photo is the cover."
+			},
+			"reference": {
+				"title": "Furniture photos and references",
+				"hint": "Similar furniture, shop screenshots, details you like."
+			},
+			"room": {
+				"title": "Room photos",
+				"hint": "The niche or wall where the furniture will stand — helps the workshop judge the measurements."
+			},
+			"document": {
+				"title": "Drawings and documents",
+				"hint": "Measurements, floor plan, sketches — PDF or photos."
+			}
+		}
+	},
+	"reviews": {
+		"title": "Workshop review",
+		"prompt": "How did “{{name}}” handle the order? Other clients will see the review on the workshop page.",
+		"rating": "Rating",
+		"starLabel": "{{value}} of 5",
+		"ratingLabel": "Rated {{value}} of 5",
+		"ratingRequired": "Pick a rating from 1 to 5",
+		"text": "Comment",
+		"textHint": "Optional. What you liked and what could be better.",
+		"submit": "Send review",
+		"edit": "Edit review",
+		"saved": "Thank you, the review is saved",
+		"anonymous": "Sheber client",
+		"sectionTitle": "Reviews",
+		"note": "Reviews come only from clients of orders completed through Sheber — one per order.",
+		"showMore": "Show more",
+		"count_one": "{{count}} review",
+		"count_other": "{{count}} reviews",
+		"average": "{{value}} of 5",
+		"emptyTitle": "No reviews yet",
+		"emptyText": "Only a client whose order the workshop completed through Sheber can leave one.",
+		"reply": {
+			"label": "Workshop's reply",
+			"action": "Reply to review",
+			"edit": "Edit reply",
+			"hint": "Everyone will see the reply on the workshop page. No contacts or links.",
+			"required": "Write a reply",
+			"submit": "Publish reply",
+			"saved": "Reply published"
+		}
 	}
 }

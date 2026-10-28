@@ -1,3 +1,4 @@
+import type { HandleType } from './document'
 import {
 	type Axis,
 	type CellNode,
@@ -116,6 +117,10 @@ export function setMaterials(
 	patch: Partial<DesignDocument['materials']>,
 ): DesignDocument {
 	return { ...doc, materials: { ...doc.materials, ...patch } }
+}
+
+export function setHandles(doc: DesignDocument, handles: HandleType): DesignDocument {
+	return { ...doc, hardware: { ...doc.hardware, handles } }
 }
 
 export function setFacade(

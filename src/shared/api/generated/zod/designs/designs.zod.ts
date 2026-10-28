@@ -32,7 +32,11 @@ export const ListDesignsResponse = zod.object({
   "sourceUrl": zod.union([zod.string(),zod.null()]),
   "document": zod.record(zod.string(), zod.unknown()),
   "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
+  "updatedAt": zod.iso.datetime({"offset":true}),
+  "activeOrder": zod.union([zod.object({
+  "id": zod.uuid(),
+  "status": zod.enum(['published', 'assigned', 'in_progress', 'completed', 'cancelled'])
+}),zod.null()]).optional().describe('Unfinished order published from this design')
 })),
   "total": zod.int()
 })
@@ -65,7 +69,11 @@ export const CreateDesignResponse = zod.object({
   "sourceUrl": zod.union([zod.string(),zod.null()]),
   "document": zod.record(zod.string(), zod.unknown()),
   "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
+  "updatedAt": zod.iso.datetime({"offset":true}),
+  "activeOrder": zod.union([zod.object({
+  "id": zod.uuid(),
+  "status": zod.enum(['published', 'assigned', 'in_progress', 'completed', 'cancelled'])
+}),zod.null()]).optional().describe('Unfinished order published from this design')
 })
 
 /**
@@ -83,7 +91,11 @@ export const GetDesignResponse = zod.object({
   "sourceUrl": zod.union([zod.string(),zod.null()]),
   "document": zod.record(zod.string(), zod.unknown()),
   "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
+  "updatedAt": zod.iso.datetime({"offset":true}),
+  "activeOrder": zod.union([zod.object({
+  "id": zod.uuid(),
+  "status": zod.enum(['published', 'assigned', 'in_progress', 'completed', 'cancelled'])
+}),zod.null()]).optional().describe('Unfinished order published from this design')
 })
 
 /**
@@ -111,7 +123,11 @@ export const UpdateDesignResponse = zod.object({
   "sourceUrl": zod.union([zod.string(),zod.null()]),
   "document": zod.record(zod.string(), zod.unknown()),
   "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
+  "updatedAt": zod.iso.datetime({"offset":true}),
+  "activeOrder": zod.union([zod.object({
+  "id": zod.uuid(),
+  "status": zod.enum(['published', 'assigned', 'in_progress', 'completed', 'cancelled'])
+}),zod.null()]).optional().describe('Unfinished order published from this design')
 })
 
 /**

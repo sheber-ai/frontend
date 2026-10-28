@@ -27,13 +27,13 @@ import type {
   HTTPValidationError,
   ListMyOrdersParams,
   ListOrderFeedParams,
+  MyOrdersPageSchema,
   OfferCreateSchema,
   OfferSchema,
   OrderCreateSchema,
   OrderDetailSchema,
   PageSchemaOfferWithWorkshopSchema,
-  PageSchemaOrderFeedItemSchema,
-  PageSchemaOrderSchema
+  PageSchemaOrderFeedItemSchema
 } from '../../model';
 
 import { httpClient } from '../../../http-client';
@@ -135,7 +135,7 @@ export const listMyOrders = (
 ) => {
 
 
-      return httpClient<PageSchemaOrderSchema>(
+      return httpClient<MyOrdersPageSchema>(
       {url: `/api/v1/orders/mine`, method: 'GET',
         params, signal
     },

@@ -8,14 +8,28 @@ const keycloak = new Keycloak({
 	clientId: env.VITE_KEYCLOAK_CLIENT_ID,
 })
 
-/** Call once before render. Checks the session silently. */
+const PROBE_TIMEOUT_MS = 3000
+const IFRAME_TIMEOUT_MS = 5000
+
+/** Rejects fast when Keycloak does not answer, instead of waiting for keycloak-js iframe timeouts. */
+async function probeKeycloak(): Promise<void> {
+	// An opaque no-cors response is enough: it proves the server answers
+	await fetch(`${env.VITE_KEYCLOAK_URL}/realms/${env.VITE_KEYCLOAK_REALM}/`, {
+		mode: 'no-cors',
+		signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
+	})
+}
+
+/** Call once before render. Checks the session silently; rejects quickly if Keycloak is unreachable. */
 export async function initAuth(): Promise<void> {
-	await keycloak.init({
+	const init = keycloak.init({
 		onLoad: 'check-sso',
 		pkceMethod: 'S256',
 		silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`,
 		checkLoginIframe: false,
+		messageReceiveTimeout: IFRAME_TIMEOUT_MS,
 	})
+	await Promise.all([init, probeKeycloak()])
 }
 
 export function isAuthenticated(): boolean {

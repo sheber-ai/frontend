@@ -27,7 +27,7 @@ import type {
   HTTPValidationError,
   ListWorkshopsParams,
   PageSchemaWorkshopAdminSchema,
-  WorkshopPublicSchema,
+  WorkshopProfileSchema,
   WorkshopRejectSchema,
   WorkshopSaveSchema,
   WorkshopSchema
@@ -317,7 +317,7 @@ export const getWorkshop = (
 ) => {
 
 
-      return httpClient<WorkshopPublicSchema>(
+      return httpClient<WorkshopProfileSchema>(
       {url: `/api/v1/workshops/${workshopId}`, method: 'GET', signal
     },
       options);

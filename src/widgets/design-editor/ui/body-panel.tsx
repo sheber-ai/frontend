@@ -2,8 +2,12 @@ import { useTranslation } from 'react-i18next'
 import {
 	type DesignDocument,
 	type FacadeType,
+	HANDLE_TYPES,
+	type HandleType,
+	handleType,
 	LIMITS,
 	setFacade,
+	setHandles,
 	setMaterials,
 	setPlinth,
 	setSize,
@@ -80,6 +84,20 @@ export function BodyPanel({ document: doc, apply }: Props) {
 				/>
 				<p className="text-body-sm text-muted-foreground">
 					{t(`editor.facade.${doc.facade.type}Hint`)}
+				</p>
+				<Field label={t('editor.handles.label')}>
+					<Segmented<HandleType>
+						label={t('editor.handles.label')}
+						value={handleType(doc)}
+						onChange={(handles) => apply((current) => setHandles(current, handles))}
+						options={HANDLE_TYPES.map((value) => ({
+							value,
+							label: t(`editor.handles.${value}`),
+						}))}
+					/>
+				</Field>
+				<p className="text-body-sm text-muted-foreground">
+					{t(`editor.handles.${handleType(doc)}Hint`)}
 				</p>
 				{doc.facade.type === 'sliding' && (
 					<Field label={t('editor.facade.panels')}>

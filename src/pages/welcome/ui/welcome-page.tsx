@@ -65,6 +65,7 @@ export function WelcomePage() {
 						<ProfileForm
 							viewer={viewer}
 							submitLabel={t('welcome.submit')}
+							guardUnsaved={false}
 							onSaved={() =>
 								void navigate({
 									to: intent === 'workshop' ? '/workshop' : '/projects/new',

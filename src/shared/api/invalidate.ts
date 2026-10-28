@@ -15,4 +15,6 @@ export const API_PATHS = {
 	designs: '/api/v1/designs',
 	workshops: '/api/v1/workshops',
 	me: '/api/v1/users/me',
+	notifications: '/api/v1/notifications',
+	attachments: '/api/v1/attachments',
 } as const

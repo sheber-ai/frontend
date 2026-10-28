@@ -6,15 +6,23 @@
  */
 import type { CityBriefSchema } from './cityBriefSchema';
 import type { FurnitureTypeEnum } from './furnitureTypeEnum';
+import type { WorkshopMaterialEnum } from './workshopMaterialEnum';
+import type { WorkshopServiceEnum } from './workshopServiceEnum';
 import type { WorkshopStatusEnum } from './workshopStatusEnum';
 
 export interface WorkshopAdminSchema {
   id: string;
   name: string;
   city: CityBriefSchema;
+  /** Other cities the workshop serves besides `city` */
+  serviceCities: CityBriefSchema[];
   description: string;
   website: string | null;
   furnitureTypes: FurnitureTypeEnum[];
+  services: WorkshopServiceEnum[];
+  materials: WorkshopMaterialEnum[];
+  warrantyMonths: number | null;
+  foundedYear: number | null;
   createdAt: string;
   phone: string;
   taxId: string;
